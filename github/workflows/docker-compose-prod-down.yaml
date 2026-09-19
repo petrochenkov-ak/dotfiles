@@ -1,0 +1,9 @@
+name: docker-compose-prod-down.yaml
+
+on:
+  workflow_dispatch:
+
+jobs:
+  docker_compose_down:
+    uses: petrochenkov-ak-lab/.github/.github/workflows/base-docker-compose-prod-down.yaml@main
+    secrets: inherit
