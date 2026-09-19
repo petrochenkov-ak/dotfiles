@@ -1,0 +1,27 @@
+repos:
+  - repo: 'https://github.com/pre-commit/pre-commit-hooks'
+    rev: v5.0.0
+    hooks:
+      - id: check-yaml
+        name: Check YAML
+
+  - repo: local
+    hooks:
+      - id: ruff
+        name: Ruff Linter
+        entry: uv run ruff check --fix
+        language: system
+        types: [python]
+
+      - id: ruff-format
+        name: Ruff Formatter
+        entry: uv run ruff format
+        language: system
+        types: [python]
+
+      - id: pytest-all
+        name: Run all workspace tests
+        entry: bash -c 'if uv pip list | grep -q "pytest"; then uv run pytest; else echo "pytest not configured, skipping."; fi'
+        language: system
+        pass_filenames: false
+        files: \.py$

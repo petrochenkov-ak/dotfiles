@@ -1,0 +1,16 @@
+%YAML 1.2
+---
+name: Dockerfile Custom
+file_extensions: [Dockerfile, dockerfile]
+scope: source.dockerfile
+
+contexts:
+  main:
+    - match: '\b(FROM|MAINTAINER|RUN|CMD|LABEL|EXPOSE|ENV|ADD|COPY|ENTRYPOINT|VOLUME|USER|WORKDIR|ARG|ONBUILD|STOPSIGNAL|HEALTHCHECK|SHELL)\b'
+      scope: keyword.control.dockerfile
+    - match: '#.*$'
+      scope: comment.line.number-sign.dockerfile
+    - match: '"[^"\\]*(?:\\.[^"\\]*)*"'
+      scope: string.quoted.double.dockerfile
+    - match: "'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'"
+      scope: string.quoted.single.dockerfile

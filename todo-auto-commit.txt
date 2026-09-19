@@ -1,0 +1,6 @@
+chore(auto): update project dependencies [skip ci]
+
+- Triggered by GitHub Actions
+- Workflow: ${{ github.workflow }}
+- Run ID: ${{ github.run_id }}
+- Actor: ${{ github.actor }}

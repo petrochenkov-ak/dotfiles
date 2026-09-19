@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+# ~/.macos — https://mths.be/macos
+
+( set -x; sudo -v )
+
+# Close any open System Preferences panes, to prevent them from overriding
+# settings we’re about to change
+osascript -e 'tell application "System Preferences" to quit'
+
+# Disable the sound effects on boot
+sudo nvram SystemAudioVolume=" "
+
+sudo pmset -a sms 0 # Disable the sudden motion sensor as it’s not useful for SSDs
+sudo pmset -a autorestart 0 # Don't restart after power failure
+sudo pmset sleep 0  # disable sleep
+sudo pmset displaysleep 120 # monitor sleep after 2 hours
+
+# sudo nvram -d SystemAudioVolume # reset
+sudo nvram SystemAudioVolume="%01" # 10% startup sound volume
+
+sudo systemsetup -setrestartfreeze on # Restart automatically if the computer freezes
+sudo systemsetup -setcomputersleep Off > /dev/null # Never go into computer sleep mode

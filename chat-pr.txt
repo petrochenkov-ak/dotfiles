@@ -1,0 +1,24 @@
+all:
+   # ~/git/{full_name} symlinks
+   find -H ~/git -maxdepth 2 -mindepth 2 -type d -exec find {}/.scripts -type l -delete 2>/dev/null \;
+   # .github/workflows/docker-compose.*.yaml
+   find -H $(HOME)/git -maxdepth 2 -mindepth 2 -type d -exec test -d {}/docker \; -exec rsync -a --mkpath --include="docker-compose.*.yaml" --exclude="*" github/workflows/ {}/.github/workflows/ \;
+   # .scripts/git/
+   find -H $(HOME)/git -maxdepth 2 -mindepth 2 -type d -exec rsync -a --delete --mkpath scripts/git/. {}/.scripts/git/ \;
+   # .scripts/github/
+   find -H $(HOME)/git -maxdepth 2 -mindepth 2 -type d -exec rsync -a --delete --mkpath scripts/github/. {}/.scripts/github/ \;
+   find -H $(HOME)/git -maxdepth 2 -mindepth 2 -type d -exec rsync -a --delete --mkpath scripts/Terminal.sh {}/.scripts/Terminal.sh \;
+   find -H $(HOME)/git -maxdepth 2 -mindepth 2 -type d  -exec rsync -a --delete --mkpath scripts/prompts/. {}/.scripts/prompts/ \;
+   # .scripts/celery/ .scripts/django/ .scripts/python/
+   find -H $(HOME)/git -maxdepth 2 -mindepth 2 -type d -exec test -d {}/python \; -exec rsync -a --delete --mkpath scripts/python/. {}/.scripts/python/ \; -exec rsync -a --delete --mkpath scripts/celery/. {}/.scripts/celery/ \; -exec rsync -a --delete --mkpath scripts/django/. {}/.scripts/django/ \;
+   # .scripts/postgres/
+   find -H $(HOME)/git -maxdepth 2 -mindepth 2 -type d -exec test -d {}/sql \; -exec rsync -a --delete --mkpath scripts/postgres/. {}/.scripts/postgres/ \;
+   # .scripts/docker/
+   find -H $(HOME)/git -maxdepth 2 -mindepth 2 -type d -exec test -d {}/docker \; -exec rsync -a --delete --mkpath scripts/docker/. {}/.scripts/docker/ \;
+   find -H $(HOME)/git -maxdepth 2 -mindepth 2 -type d -exec test -d {}/docker \; -exec rsync -a --delete --mkpath scripts/server/. {}/.scripts/server/ \;
+
+---
+сейчас у меня так раскидываются repo dotfiles
+он думаю может быть
+1) поместить их в ~/.config/xxx или ~/.local
+2) сделать отдельную команду repo-dotfiles-sync например

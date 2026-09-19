@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "git_commit_message_gen_print"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

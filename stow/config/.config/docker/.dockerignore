@@ -1,0 +1,21 @@
+.DS_Store
+.env*
+.git*
+_scripts
+__pycache__
+docker-bake.hcl
+docker-compose*
+Dockerfile
+*.command
+
+!logging.conf
+# django
+assets
+static
+
+node_modules/
+
+# django
+assets
+static
+

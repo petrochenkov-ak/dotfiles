@@ -1,0 +1,6 @@
+[user]
+	name = Petrochenkov Andrey Konstantinovich
+	email = andrewpetrochenkov@users.noreply.github.com
+
+[core]
+	sshCommand = "ssh -i ~/.ssh/id_ed25519_github_petrochenkov_ak -o IdentitiesOnly=yes"

@@ -1,0 +1,24 @@
+127.0.0.1   localhost
+255.255.255.255 broadcasthost
+::1             localhost
+
+# sudo chmod +a "$USER allow read,write" /etc/hosts
+
+# top level domain must be not registered, check:
+# https://www.iana.org/domains/root/db/com.html
+# top domains: localhost, local, internal, self, server, test
+
+127.0.0.1   localhost
+127.0.0.1   m.localhost
+127.0.0.1   local
+127.0.0.1   test
+127.0.0.1   test.local
+127.0.0.1   host.docker.internal
+
+85.221.213.169 github_graphql_raw_prod
+185.221.213.245 github_rest_raw_prod
+185.221.213.245 github_graphql_nodes_prod
+185.221.213.245 github_graphql_raw_prod
+185.221.213.245 gistmanager_prod
+
+# ping localhost

@@ -1,0 +1,11 @@
+{
+    "shell_cmd": "bash \"$packages/User/scripts/builders/bash.sh\" \"$file\"",
+    "selector": "source.shell",
+    "file_patterns": ["*.sh"],
+    "variants": [
+        {
+            "name": "Run",
+            "shell_cmd": "bash \"$packages/User/scripts/builders/bash.sh\" \"$file\"",
+        }
+    ]
+}

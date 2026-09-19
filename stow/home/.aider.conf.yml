@@ -1,0 +1,38 @@
+add-gitignore-files: false
+analytics: false
+auto-commits: false
+browser: false
+cache-prompts: true
+show-model-warnings: false
+yes-always: true
+
+cache-prompts: true
+cache-keepalive-pings: 2
+
+chat-history-file: /dev/null
+input-history-file: /dev/null
+
+model-metadata:
+  openai/deepseek-v4-flash:
+    max_input_tokens: 122880
+    max_output_tokens: 4096
+    input_cost_per_token: 0.00000014
+    output_cost_per_token: 0.00000028
+    litellm_provider: openai
+    mode: chat
+
+  openai/deepseek-v4-pro:
+    max_input_tokens: 122880
+    max_output_tokens: 8192
+    input_cost_per_token: 0.00000028
+    output_cost_per_token: 0.00000056
+    litellm_provider: openai
+    mode: chat
+
+  openai/qwen3-coder:
+    max_input_tokens: 122880
+    max_output_tokens: 8192
+    input_cost_per_token: 0.00000028
+    output_cost_per_token: 0.00000056
+    litellm_provider: openai
+    mode: chat

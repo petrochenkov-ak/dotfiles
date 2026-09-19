@@ -1,0 +1,14 @@
+{
+    "selector": "file.php,source.php",
+    "cmd": ["php","$file"],
+	"env": {
+		"SUBLIME_TEXT": "true"
+	},
+    "variants":
+    [
+        {
+            "name": "Run",
+            "cmd": ["php","$file"]
+        }
+    ]
+}

@@ -1,0 +1,11 @@
+%YAML 1.2
+---
+name: Shell Script
+file_extensions:
+  - sh
+  - bash
+first_line_match: '^$'
+scope: source.shell
+contexts:
+  main:
+    - match: ''

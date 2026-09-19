@@ -1,0 +1,21 @@
+{
+      "experimental": true,
+      "features": {
+        "buildkit": true
+      },
+      "insecure-registries": [
+        "localhost:5000",
+        "95.181.212.218:5000"
+      ],
+      "builder": {
+        "gc": {
+          "enabled": true,
+          "defaultKeepStorage": "20GB"
+        }
+      },
+     "log-driver": "json-file",
+      "log-opts": {
+        "max-size": "1m",
+        "max-file": "1"
+      }
+}

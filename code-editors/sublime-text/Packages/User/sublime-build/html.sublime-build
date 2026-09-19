@@ -1,0 +1,11 @@
+{
+    "selector": "source.html, text.html",
+    "cmd": ["html","$file"],
+    "variants":
+    [
+        {
+            "name": "Run",
+            "cmd": ["html","$file"]
+        }
+    ]
+}

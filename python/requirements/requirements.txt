@@ -1,0 +1,119 @@
+# python3 -m pip install -r /path/to/requirements.txt
+
+# known-issues:
+# ModuleNotFoundError: No module named 'XXX'
+# python3 -m pip  install -U XXX
+
+aiofiles
+aiohttp
+apscheduler
+arrow
+awscli
+
+black
+
+celery[redis]
+click
+ConfigParser
+conversations_or_any_yaml_checker
+cssselect
+
+datamodel-code-generator
+decorator
+discord
+django
+dj-database-url
+django-allauth
+django-bakery
+django-cachalot
+django-cache-machine
+django-cacheops
+django-comments-xtd
+django-configurations
+django-cors-headers
+django-dirtyfields
+django-emoji
+django-extensions
+django-forms-bootstrap
+django-freeze
+django-htmlmin
+django-manifest-loader
+django-medusa
+django-ninja
+django-querycount
+django-settings-export
+django-summernote
+django-tinymce
+django-webpack-loader
+django-webpack5-loader
+docker
+drf-pydantic
+drf-spectacular
+drf-yasg
+
+# eventlet
+# gevent
+# greenlet
+
+flask
+
+ijson
+
+jinja2
+
+humanfriendly
+
+linkheader_parser
+lxml
+
+MarkdownPP
+migradiff
+
+nose
+nltk
+
+open-interpreter
+orjson
+
+pendulum
+pigar
+pika
+pillow
+pip-tools
+pipreqs
+psycopg2
+psycopg2cffi
+psutil
+pydantic
+pydantic_django
+pyquery
+python-memcached
+# psycopg2 or psycopg2-binary or psycopg2cffi
+# psycopg2
+# psycopg2-binary
+# psycopg2cffi
+pycodestyle
+pydantic
+PyGithub
+pylint
+pylint-django
+pyrefact
+pytest
+PyYAML
+
+redis
+rstvalidator
+ruamel.yaml
+
+schedule
+shyaml
+sqlalchemy
+
+twine
+wheel
+
+youtube-dl
+
+urlextract
+
+validators

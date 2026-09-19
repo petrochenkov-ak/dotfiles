@@ -1,0 +1,8 @@
+[
+    { "keys": ["super+d"], "command": "duplicate_file"},
+	{ "keys": ["super+b"], "command": "build", "args": {"variant": "Run"} },
+	{ "keys": ["super+shift+b"], "command": "build" },
+
+	{ "keys": ["super+shift+f"], "command": "open_finder" },
+	{ "keys": ["super+shift+t"], "command": "open_terminal" }
+]
