@@ -3,4 +3,4 @@
 
 { set -x; cd "${BASH_SOURCE[0]%/*/*/*}" || exit; { set +x; } 2>/dev/null; }
 
-( set -x; git-remote-setup )
+( set -x; git-remote-recreate )
