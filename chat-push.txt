@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+current_branch=$(git symbolic-ref --short HEAD) || exit 1
+
+( set -x; git-guard-push ) || exit 1
+
+if ! git ls-remote --exit-code origin main >/dev/null 2>&1; then
+    if [ "$current_branch" = "main" ]; then
+        ( set -x; git push -q -u origin main ) || exit 1
+    else
+        echo "❌ Error: Remote main not found. Switch to main for the initial push." && exit 1
+    fi
+else
+    if [ "$current_branch" = "main" ]; then
+        local_sha=$(git rev-parse HEAD) || exit 1
+        remote_sha=$(git rev-parse origin/main 2>/dev/null) || exit 1
+
+        [ "$local_sha" = "$remote_sha" ] && echo "Everything up-to-date" && exit
+        echo "❌ Error: Direct push to protected main is blocked." && exit 1
+    fi
+    ( set -x; git push -q -u origin "$current_branch" ) || exit 1
+fi
+( set -x; git fetch origin main -q ) || exit 1
+---
++ git-guard-push
+❌ Error: Remote main not found. Switch to main for the initial push.
+---
+почему он это выдает? удаленный репозиторий существует и не пустой
