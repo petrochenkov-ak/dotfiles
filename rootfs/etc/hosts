@@ -15,10 +15,12 @@
 127.0.0.1   test.local
 127.0.0.1   host.docker.internal
 
-85.221.213.169 github_graphql_raw_prod
-185.221.213.245 github_rest_raw_prod
-185.221.213.245 github_graphql_nodes_prod
-185.221.213.245 github_graphql_raw_prod
-185.221.213.245 gistmanager_prod
+#140.82.121.3 github.com
+#140.82.121.4 www.github.com
+#140.82.121.5 api.github.com
+#140.82.121.9 gist.github.com
+185.199.108.153 github.githubassets.com
+185.199.109.153 github.githubassets.com
+185.199.108.133 favicons.githubassets.com
 
 # ping localhost

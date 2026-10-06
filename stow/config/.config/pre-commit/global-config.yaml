@@ -25,3 +25,10 @@ repos:
         language: system
         pass_filenames: false
         files: \.py$
+
+      - id: precommit-docker-compose-config
+        name: precommit-docker-compose-config
+        entry: bin/precommit-docker-compose-config
+        language: system
+        pass_filenames: false
+        files: ^docker/compose/.*\.yaml$

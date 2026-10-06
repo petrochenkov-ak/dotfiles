@@ -1,2 +1,0 @@
-retry -u success --
-retry -w 10 -u success -- gh pr checks 131

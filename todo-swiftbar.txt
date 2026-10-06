@@ -1,0 +1,2 @@
+swiftbar-xxx
+swiftbar-ssh-docker-ps

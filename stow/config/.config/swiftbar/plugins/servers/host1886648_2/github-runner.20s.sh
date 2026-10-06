@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 output="$(ssh host1886648_2 "docker ps | grep github-runner")" || exit 1
 [[ -n $output ]] && exit
