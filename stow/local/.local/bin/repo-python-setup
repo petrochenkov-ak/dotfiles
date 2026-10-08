@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+! [ -d python/packages ] && echo "ERROR: ${PWD}/python/packages/ not exists" && exit 1
+
+( set -x; python3.14 -m venv .venv --system-site-packages ) || exit
+[ -e python/Makefile ] && { ( set -x; cd python && make ) || exit; }
+( set -x; "${BASH_SOURCE%/*}"/repo-pyproject-gen ) || exit
+for pkg in python/packages/*/; do
+    [[ "$pkg" == *"__pycache__"* ]] && continue
+    ( set -x; .venv/bin/python -m pip install -e "$pkg" --no-build-isolation --no-deps ) || exit
+done
+
+[ -e python/.external_packages ] || { echo "SKIP: python/.external_packages not exists" && exit; }
+for pkg in python/.external_packages/*/; do
+    [[ "$pkg" == *"__pycache__"* ]] && continue
+    ( set -x; .venv/bin/python -m pip install -e "$pkg" --no-build-isolation --no-deps ) || exit
+done

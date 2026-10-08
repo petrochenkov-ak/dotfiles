@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+! [ -d python/packages ] && echo "ERROR: ${PWD}/python/packages/ not exists" && exit 1
+
+( set -x; python -m repo_django_api_yaml_clean ) || exit
+( set -x; python -m repo_django_api_yaml_base_gen ) || exit
+( set -x; python -m repo_django_api_yaml_filter_gen ) || exit
+( set -x; python -m repo_django_api_yaml_method_gen ) || exit
+( set -x; python -m repo_django_api_yaml_model_gen ) || exit
+( set -x; python -m repo_django_api_yaml_operation_id_gen ) || exit
+( set -x; python -m repo_django_api_yaml_response_model_gen ) || exit

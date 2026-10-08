@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+( set -x; "${BASH_SOURCE%/*}"/repo-prompts-build &> /dev/null ) || exit
+while read -r prompt_file; do
+    prompt_dir="${prompt_file%/*}"
+    prompt_filename="${prompt_file##*/}"
+    output_file="${prompt_dir}/${prompt_filename%.md}_answer✅.md"
+    [ -e "$output_file" ] && { echo "SKIP: $output_file exists"; continue; }
+     ( set -x; prompt-chat "$prompt_file" "$output_file" ) || exit
+done < <(find .prompts/chat -type f -name "*.md" ! -name "_*" | grep -v "_answer")

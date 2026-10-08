@@ -1,0 +1,10 @@
+%YAML 1.2
+---
+# See http://www.sublimetext.com/docs/3/syntax.html
+name: command
+file_extensions:
+  - command
+scope: source.command
+contexts:
+  main:
+    - include: scope:source.shell

@@ -1,0 +1,24 @@
+[
+    {
+        "key": "cmd+b",
+        "command": "-workbench.action.toggleSidebarVisibility"
+    },
+    {
+        "key": "cmd+b",
+        "command": "code-runner.run",
+        "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "f13",
+        "command": "-workbench.action.zoomIn"
+    },
+    {
+        "key": "f13",
+        "command": "-workbench.action.zoomOut"
+    },
+    {
+        "key": "f13",
+        "command": "PASTE_VOICE_COMMAND_ID",
+        "when": "editorTextFocus || inputFocus || aichatInputFocus || composerFocus"
+    }
+]

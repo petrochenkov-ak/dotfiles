@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Prevent direct pushes to the main branch
+while read local_ref local_sha remote_ref remote_sha
+do
+    # Check if the target branch on the remote server is main
+    if [ "$remote_ref" = "refs/heads/main" ]; then
+        echo ""
+        echo "❌ [GIT PROTECT] ERROR: Direct push to the 'main' branch is prohibited!"
+        echo "👉 Create a feature branch instead: git checkout -b feature/my-task"
+        echo "👉 Push your feature branch and open a Pull Request on GitHub."
+        echo ""
+        exit 1 # Cancels the git push command
+    fi
+done
+
+exit 0

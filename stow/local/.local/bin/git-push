@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+( set -x; gh-ssh-test ) || exit 1
+( set -x; git-guard-push ) || exit 1
+
+( set -x; git-push-init ) || exit 1
+( set -x; git-push-feature ) || exit 1
+
+( set -x; git fetch origin main -q ) || exit 1

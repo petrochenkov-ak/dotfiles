@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+itunes pause &
+vlc pause &
+python3 -m mac_youtube.pause &
+python3 -m mac_vk.audio.pause &

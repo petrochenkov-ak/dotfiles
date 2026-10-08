@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+if ! ( set -x; git ls-remote --exit-code origin main ) >/dev/null 2>&1; then
+    if ! ( set -x; git log -1 ) >/dev/null 2>&1; then
+        ( set -x; git commit --allow-empty -m "chore: initial commit" ) || exit 1
+    fi
+    ( set -x; git push -q -u origin main ) || exit 1
+fi;:

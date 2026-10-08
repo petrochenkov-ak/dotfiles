@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[ -z "$(git status --porcelain)" ] && exit
+( set -x; git add -A && git commit -m "wip: pre-prompt auto snapshot ($(date +'%Y-%m-%d %H:%M:%S'))" )

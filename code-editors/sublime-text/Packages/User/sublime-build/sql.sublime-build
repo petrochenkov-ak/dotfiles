@@ -1,0 +1,12 @@
+{
+    "selector": "file.sql,source.sql",
+    "cmd": ["sql","$file"],
+    "variants":
+    [
+        {
+            "name": "Run",
+            "cmd": ["sql","$file"]
+        }
+    ],
+    "working_dir": "${project_path:${folder}}"
+}

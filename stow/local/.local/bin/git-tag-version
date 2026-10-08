@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+! [ -d .git ] && echo "ERROR: .git NOT EXISTS" && exit 1
+[[ $PWD == /var/* ]] || [[ $PWD == /tmp/* ]] && { echo "SKIP: $PWD"; exit; }
+
+find="$(find -L . -type f -name version.txt -maxdepth 2)" || exit
+path="$(while IFS= read f; do ! [ -L "$f" ] && echo "$f"; done <<< "$find")"
+[[ -z "$path" ]] && echo "SKIP ($PWD): version.txt not found" && exit
+
+v="$(cat "$path")" || exit
+[[ -z "$v" ]] && exit
+
+tag="$v"
+commit_id="$(git rev-parse --verify HEAD)" || exit
+msg="$v" || exit
+
+[ -e .git/refs/tags/"$tag" ] && echo "SKIP ($PWD): .git/refs/tags/$tag EXISTS" && exit
+
+( set -x; git tag -a "$tag" "$commit_id" -m "$msg" ) || exit

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+full_name=$(gh-full-name) || exit 1
+url="https://github.com/${full_name}/issues"
+
+( set -x; open "$url" )

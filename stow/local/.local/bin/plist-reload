@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 1 ]] && echo "usage: ${0##*/} path" && exit 1
+
+( set -x; plist-unload "$@" ) && ( set -x; plist-load "$@" )

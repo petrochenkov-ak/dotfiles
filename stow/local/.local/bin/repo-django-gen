@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+! [ -d python/packages ] && echo "ERROR: ${PWD}/python/packages/ not exists" && exit 1
+
+( set -x; repo-pyproject-gen ) || exit
+( set -x; "${BASH_SOURCE%/*}"/repo-django-models-gen ) || exit
+( set -x; "${BASH_SOURCE%/*}"/repo-django-schemas-gen ) || exit
+( set -x; "${BASH_SOURCE%/*}"/repo-django-serializers-gen ) || exit
+( set -x; "${BASH_SOURCE%/*}"/repo-django-views-gen ) || exit
+( set -x; "${BASH_SOURCE%/*}"/repo-django-root-urls-gen ) || exit
+( set -x; "${BASH_SOURCE%/*}"/repo-init-py-gen ) || exit
+( set -x; repo-celery-init-py-gen )

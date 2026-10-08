@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+! [ -d python/packages ] && echo "ERROR: ${PWD}/python/packages/ not exists" && exit 1
+
+while read -r dir_path; do
+    [ -d "$dir_path"/tasks ] && {
+        ( set -x; .venv/bin/python -m celery_package_init_py_gen "$dir_path" ) || exit
+    }
+done < <(find python/packages -type d -name "*_tasks" -mindepth 1 -maxdepth 1);:

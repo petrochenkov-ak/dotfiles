@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+! [ -d .prompts ] && { ( set -x; mkdir .prompts ) || exit; }
+
+( set -x; "${BASH_SOURCE%/*}"/repo-prompts-clean ) || exit
+( set -x; "${BASH_SOURCE%/*}"/repo-prompts-build ) || exit
+while read -r md_file; do
+    ( set -x; prompt-dry-run "$md_file" ) || exit
+done < <(find .prompts -type f -name "*.md" | grep -v "answer.md" | grep -v "ask")

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+! [ -d python/packages ] && echo "ERROR: ${PWD}/python/packages/ not exists" && exit 1
+
+while read -r dir_path; do
+    ( set -x; .venv/bin/python -m python_init_py_function_imports_gen "$dir_path" ) || exit
+done < <(find python/packages -name "utils" -type d)
+

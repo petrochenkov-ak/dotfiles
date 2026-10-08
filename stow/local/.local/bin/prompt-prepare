@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 1 ]] && echo "usage: ${0##*/} path" && exit 1
+
+( set -x; prompt-env-check ) || exit
+echo "+ prompt-build $1" && prompt-build "$1" &> /dev/null || exit
+( set -x; prompt-git-prepare ) || exit

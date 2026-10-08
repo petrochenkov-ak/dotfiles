@@ -1,0 +1,4 @@
+aider-chat
+black
+files-to-prompt
+goose-ai

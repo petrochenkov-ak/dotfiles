@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+[[ $# != 1 ]] && echo "usage: ${0##*/} pr_number" && exit 1
+
+TIMEOUT=90
+ATTEMPT=0
+PR_IDENTIFIER="$1"
+
+full_name=$(gh-full-name) || exit 1
+
+success=false
+for i in {1..5}; do
+  if ( set -x; gh pr merge "$PR_IDENTIFIER" --squash --delete-branch --admin ); then
+    success=true
+    break
+  fi
+  echo "Attempt $i failed. Retrying in 10s..."
+  sleep 10
+done
+
+[ "$success" = false ] && exit 1
+echo "Waiting for PR to be MERGED..."
+
+while true; do
+    STATE=$(set -x; gh pr view "$PR_IDENTIFIER" --json state -q .state 2>/dev/null)
+    EXIT_CODE=$?
+
+    if [ $EXIT_CODE -eq 0 ]; then
+        if [ "$STATE" = "MERGED" ]; then
+            echo "✅ PR merged."
+            break
+        elif [ "$STATE" = "CLOSED" ]; then
+            echo "❌ PR was closed without merging."
+            exit 1
+        fi
+    else
+        IS_MERGED=$(set -x; retry -u success -- gh pr view "$PR_IDENTIFIER" --json isMerged -q .isMerged 2>/dev/null) || exit 1
+        if [ "$IS_MERGED" = "true" ]; then
+            echo "✅ PR merged."
+            break
+        fi
+    fi
+
+    ATTEMPT=$((ATTEMPT + 1))
+    if [ $ATTEMPT -ge $TIMEOUT ]; then
+        echo "❌ Timeout reached."
+        exit 1
+    fi
+    sleep 1
+done
+
+( set -x; git checkout main -q ) || exit 1

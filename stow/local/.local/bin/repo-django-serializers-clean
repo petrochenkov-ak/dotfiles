@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+! [ -d python/packages ] && echo "ERROR: ${PWD}/python/packages/ not exists" && exit 1
+
+# python/packages/{schema}_models_gen/src/{schema}_models_gen/models/{table}.py
+# python/packages/{schema}_serializers_gen/src/{schema}_serializers_gen/serializers/{table}_serializer.py
+
+while read -r serializer_path; do
+    schema="${BASH_REMATCH[1]}"
+    table="${BASH_REMATCH[2]}"
+    model_path="python/packages/${schema}_models_gen/src/${schema}_models_gen/models/${table}.py"
+    [ ! -f "$model_path" ] && { ( set -x; rm "$serializer_path" ) || exit; }
+done < <(find python/packages -type f -path "*/python/packages/*_serializers_gen/*_serializer.py")
+

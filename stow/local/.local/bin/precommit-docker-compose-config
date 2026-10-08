@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[ -e docker/compose/build.yaml ] && {
+  ( set -x; docker compose \
+  -f docker/compose/build.yaml \
+  config --no-interpolate --quiet ) || exit 1
+}
+
+[ -e docker/compose/prod.yaml ] && {
+  ( set -x; docker compose \
+  -f docker/compose/base.yaml \
+  -f docker/compose/prod.yaml \
+  config --no-interpolate --quiet ) || exit 1
+}
+exit 0

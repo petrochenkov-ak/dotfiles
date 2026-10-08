@@ -1,0 +1,50 @@
+project-python-packages/ репозиторий с python пакетами
+project-sql/ репозиторий с sql файлами
+
+
+Input SQL files live at:
+`{project}-sql/sql/_shared/SCHEMA/{schema}/TABLE/{table}.sql` - включаем только внутри _repl_tasks схем
+`{project}-sql/sql/SCHEMA/{schema}/TABLE/{table}.sql` - включаем ВСЕ
+
+Output Python files must be created at:
+`{project}-python-packages/packages/{schema}/{schema}/_init__.py`
+`{project}-python-packages/packages/{schema}/{schema}/models/_init__.py`
+`{project}-python-packages/packages/{schema}/{schema}/models/{table}.py` ПУСТОЙ ФАЙЛ, будет потом сгенерирован ИИ
+
+
+
+формат файлов:
+`{project}-python-packages/packages/{schema}/{schema}/models/_init__.py`
+импорты из `{project}-python-packages/packages/{schema}/{schema}/models/*.py (а значит __init__.py надо генерировать в последнюю очередь)
+импорты должны быть построчно 1 строчка на 1 модель
+from .{filename} import Xxx
+
+правило для генерации имени модели:
+<rule>
+EXCEPTION: if the SQL table name ends with the literal suffix `_queue`, then:
+- Remove the `_queue` suffix.
+- Convert the remaining part to PascalCase using rule 1.
+- Append the suffix `Task` (NOT `Queue`).
+Example pattern (do NOT copy literally):
+`word_word_queue` -> `WordWordTask`
+`word_queue` -> `WordTask`
+</rule>
+
+`{project}-python-packages/packages/{schema}/{schema}/models/{table}.py`
+ПУСТОЙ ФАЙЛ, будет потом сгенерирован ИИ
+
+УДАЛЕНИЕ ФАЙЛА
+`{project}-python-packages/packages/{schema}/{schema}/models/{table}.py надо удалить если нет соответствуюшего {table}.sql файла
+
+что еще важно
+1) никаких print
+2) print только в случае если ничего не сделано и причину
+print на каждую причину ОТДЕЛЬНО
+не надо ошибок в общем случае тк нихрена непонятно что именно нетак
+3) никаких raise тк это cli одностраничный скрипт
+4) $ python -m python_packages_django_models_init
+5)
+
+нужна хророшая однозначная инструкция для любых ИИ (в  тч самых дешевых и тупых) по которой потом уже будет сгенирирован python скрипт для генерации python. afqkjd
+
+код инструкции выдай markdown кодом с xml для ИИ. на английском

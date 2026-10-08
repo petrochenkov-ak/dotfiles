@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+! [ -d python/packages ] && echo "ERROR: ${PWD}/python/packages/ not exists" && exit 1
+! [ -d sql ] && echo "ERROR: ${PWD}/sql/ not exists" && exit 1
+
+( set -x; "${BASH_SOURCE%/*}"/repo-psql-codegen-init ) || exit
+( set -x; python -m repo_django_models_clean ) || exit
+( set -x; .venv/bin/python -m repo_django_models_gen ) || exit
+while read -r init_dir; do
+    ( set -x; .venv/bin/python -m python_init_py_class_imports_gen "$init_dir" ) || exit
+done < <(find python/packages -name "models" -type d -mindepth 3 -maxdepth 3 | grep -v fdw)
+
+( set -x; "${BASH_SOURCE%/*}"/repo-python-packages-black ) || exit
+( set -x; "${BASH_SOURCE%/*}"/repo-python-packages-isort ) || exit

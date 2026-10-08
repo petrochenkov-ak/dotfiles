@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+[[ $# != 2 ]] && echo "usage: ${0##*/} prompt_file output_file" && exit 1
+
+
+
+# --edit-format whole \
+( set -x; aider \
+  --model "openai/${LLM_MODEL}" \
+  --edit-format architect \
+  --light-mode \
+  --map-tokens 0 \
+  --no-analytics \
+  --no-auto-lint \
+  --no-auto-test \
+  --no-dry-run \
+  --no-notifications \
+  --no-pretty \
+  --no-stream \
+  "${FILE_ARGS[@]}" \
+  --test-cmd "prompt-test $1 {}" \
+  --message-file "$1" </dev/null ) > "${MARKER_OUTPUT_FILE}" 2> "${STDERR_FILE}" || exit
+prompt-clean "$1" || exit
+( set -x; cat "${MARKER_OUTPUT_FILE}" )

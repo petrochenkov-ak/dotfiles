@@ -1,0 +1,80 @@
+{
+  "code-runner.executorMap": {
+    "shellscript": "bash \"$HOME/Library/Application Support/Cursor/User/code-runners/bash.sh\""
+  },
+  "code-runner.executorMapByFileExtension": {
+    ".sh": "bash \"$HOME/Library/Application Support/Cursor/User/code-runners/bash.sh\"",
+    ".command": "bash \"$HOME/Library/Application Support/Cursor/User/code-runners/bash.sh\""
+  },
+  "code-runner.showExecutionMessage": false,
+  "code-runner.runInTerminal": false,
+  "code-runner.showExecutionMessage": false,
+  "code-runner.respectShebang": false,
+  "files.associations": {
+    "*.command": "shellscript"
+  },
+  "files.autoGuessEncoding": false,
+  "terminal.integrated.shellIntegration.enabled": false,
+  "terminal.integrated.env.osx": {},
+  "workbench.editor.association-override": "text",
+  "cursor.general.globalCursorIgnoreList": [
+    "**/.venv/**",
+    "**/venv/**",
+    "**/env/**",
+    "**/ENV/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/*.egg-info/**",
+    "**/.mypy_cache/**",
+    "**/.ruff_cache/**",
+    "**/.pytest_cache/**",
+    "**/.coverage",
+    "**/htmlcov/**",
+    "**/.pydantic_preview_cache/**",
+    "**/__pycache__/**",
+    "**/*.pyc",
+    "**/*.pyo",
+    "**/*.pyd",
+    "**/.git/**",
+    "**/.idea/**",
+    "**/.vscode/**",
+    "**/*.suo",
+    "**/*.ntvs*",
+    "**/*.njsproj",
+    "**/*.sln",
+    "**/*.swp",
+    "**/*.log",
+    "**/logs/**",
+    "**/*.sqlite3",
+    "**/*.db",
+    "**/node_modules/**",
+    "**/.next/**",
+    "**/out/**",
+    "**/site/**",
+    "**/docs/_build/**"
+  ],
+  "explorer.excludeGitIgnore": false,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/.mypy_cache": true,
+    "**/.ruff_cache": true,
+    "**/.pytest_cache": true,
+    "**/__pycache__": true,
+    "**/*.pyc": true,
+    "**/.venv": true,
+    "**/venv": true,
+    "**/*.txt": true
+  },
+  "search.exclude": {
+    "**/.mypy_cache": true,
+    "**/.ruff_cache": true,
+    "**/.pytest_cache": true,
+    "**/__pycache__": true,
+    "**/.venv": true,
+    "**/venv": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/*.txt": true
+  }
+}

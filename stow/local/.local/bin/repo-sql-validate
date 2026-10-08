@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+export PGSERVICEFILE=~/.config/postgresql/pg_service.local.conf
+export PGPASSFILE="${HOME}/.config/postgresql/pgpass"
+export PGOPTIONS="--client-min-messages=warning"
+
+! [ -e "$PGPASSFILE" ] && echo "ERROR: $PGPASSFILE not exists" && exit 1
+! [ -e "$PGSERVICEFILE" ] && echo "ERROR: $PGSERVICEFILE not exists" && exit 1
+
+( set -x; PGSERVICE=validate_local dropdb --if-exists -f validate_local ) || exit
+( set -x; PGSERVICE=validate_local createdb validate_local ) || exit
+
+for attempt in {1..10}; do
+    success=true
+    while read -r file_path; do
+        psql -v ON_ERROR_STOP=1 -d "service=validate_local" -f "$file_path" &> /dev/null || success=false
+    done < <(find sql/src -name "*.sql" -type f | grep -vi partition)
+done
+[[ $success == true ]] && exit
+while read -r file_path; do
+    echo "$file_path"
+    psql -v ON_ERROR_STOP=1 -d "service=validate_local" -f "$file_path" 1>/dev/null || exit
+done < <(find sql/src -name "*.sql" -type f | grep -vi partition)
+

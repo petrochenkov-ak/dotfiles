@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+REPO_NAME=$(gh-full-name) || exit 1
+CURRENT_BRANCH=$(git branch --show-current) || exit 1
+REMOTE_COMMITS=$(git ls-remote --heads origin 2>/dev/null) || exit 1
+
+[ "$CURRENT_BRANCH" == "main" ] && echo "skip: main branch" && exit
+[ -z "$REMOTE_COMMITS" ] && echo "skip: remote empty" && exit
+
+( set -x; retry -u success -- gh repo edit "$REPO_NAME" --delete-branch-on-merge=true ) || exit 1
+
+PR_NUMBER=$(set -x; retry -u success -- gh pr list --head "$CURRENT_BRANCH" --base main --state open --json number --jq '.[].number')
+
+if [[ -z "$PR_NUMBER" || "$PR_NUMBER" == "null" ]]; then
+    PR_URL=$(set -x; retry -u success -- gh pr create --base main --fill) || exit 1
+    PR_NUMBER=${PR_URL##*/}
+fi
+
+( set -x; gh-pr-checks-watch "$PR_NUMBER" ) || exit 1
+( set -x; gh-pr-merge "$PR_NUMBER" ) || exit 1

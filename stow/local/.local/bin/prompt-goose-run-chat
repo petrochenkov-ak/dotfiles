@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 2 ]] && echo "usage: ${0##*/} prompt_file output_file" && exit 1
+
+GOOSE_BIN="/opt/homebrew/bin/goose"
+
+export GOGOOSE_CHECK_UPDATE=false
+export GOOSE_DISABLE_KEYRING=1
+export OPENAI_HOST="${OPENAI_API_BASE%/v1/}"
+
+export FILELIST="${1%/*}/input.filelist"
+
+mapfile -t FILE_ARGS < <(sed '/^$/q' "${FILELIST}" | grep -v '^$')
+
+FILES_TO_READ=""
+for file in "${FILE_ARGS[@]}"; do
+  [ -f "$file" ] && FILES_TO_READ+="$file, "
+done
+FILES_TO_READ="${FILES_TO_READ%, }"
+
+( set -x; "$GOOSE_BIN" run \
+  --provider "openai" \
+  --model "${LLM_MODEL}" \
+  --no-session \
+  --system "You are a coding assistant. First, use your developer tools to read the following files for context: [${FILES_TO_READ}]. Then answer the user task. Do not modify any files. Output ONLY markdown." \
+  -i "$1" </dev/null ) > "${MARKER_OUTPUT_FILE}" 2> "${1%/*}/stderr.log" || exit

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ "$PWD" == */gists/* ]] && echo "SKIP: $PWD" && exit
+
+# ~/git/{full_name}
+full_name=$(pwd | awk -F'/git/' '{print $2}' | cut -d'/' -f1,2) || exit
+url="git@github.com:${full_name}.git"
+
+( set -x; git remote | xargs -n1 git remote remove ) || exit
+( set -x; git remote add origin "$url" ) || exit
+( set -x; git remote -v )

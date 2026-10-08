@@ -1,0 +1,66 @@
+# duti ~/dotfiles/git/duti.txt
+# brew install duti
+
+# duti -s com.apple.safari .ext all
+
+# ~/Library/Preferences/com.apple.LaunchServices.plist
+# defaults write com.apple.LaunchServices LSHandlers -array '{ LSHandlerContentType = "txt"; LSHandlerRoleAll = "com.apple.textedit"; }';
+
+# /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister
+# lsregister -dump # show
+# lsregister -f path/to/name.app
+# lsregister -kill -r -domain local -domain user # (refresh)
+
+# known-issues:
+# some extensions (.webloc, .url) only default or with specific apps
+
+# how to get kMDItemContentType:
+# `mdls path`
+
+#### DEFAULT ###
+
+# Google Chrome
+# com.google.chrome or com.google.chrome.canary
+
+# Sequential
+com.SequentialX.Sequential .jpg all
+
+# Sublime Text (IDE)
+com.sublimetext.3 com.apple.applescript.text all
+com.sublimetext.3 com.netscape.javascript-source all
+com.sublimetext.3 com.sun.java-source all
+com.sublimetext.3 public.php-script all
+com.sublimetext.3 public.plain-text all
+com.sublimetext.3 public.python-script all
+com.sublimetext.3 public.ruby-script all
+com.sublimetext.3 public.shell-script all
+com.sublimetext.3 public.source-code
+com.sublimetext.3 public.unix-executable all
+com.sublimetext.3 text/plain all
+
+# Transmission (torrent)
+org.m0k.transmission	.torrent			all
+
+# VIDEO
+# https://en.wikipedia.org/wiki/Video_file_format
+# org.videolan.vlc
+# com.apple.automator.video
+org.videolan.vlc .avi all
+org.videolan.vlc .flac all
+org.videolan.vlc .flv all
+org.videolan.vlc .m4p all
+org.videolan.vlc .m4v all
+org.videolan.vlc .mkv all
+org.videolan.vlc .mov all
+org.videolan.vlc .mp4 all
+org.videolan.vlc .mpe all
+org.videolan.vlc .mpeg all
+org.videolan.vlc .mpg all
+org.videolan.vlc .mpv all
+org.videolan.vlc .wmv all
+org.videolan.vlc .webm all
+org.videolan.vlc .vob all
+
+# python
+com.apple.archiveutility .egg all
+com.apple.archiveutility .whl all

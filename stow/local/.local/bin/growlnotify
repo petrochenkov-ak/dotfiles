@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+XDG_CACHE_HOME="${XDG_CACHE_HOME-$HOME/.cache}"
+
+ps -ax | grep -v grep | grep -q Growl.app || {
+    [[ -z "$(lsappinfo info -only pid Growl)" ]] && { open -a Growl; exit; }
+}
+
+set -- -m "" "$@"
+[[ ${!#} == *.png ]] && [[ ${!#} != */* ]] && {
+    image="$(shell-cache ${!#})" || exit
+    set -- "${@:1:$(($#-1))}" "$image"
+}
+chrome-isready 1 | grep -q 1 && chrome fullscreen-detect | grep -q 1 && exit
+vlc fullscreen-detect | grep -q 1 && exit
+
+# -s        show sticky once per process
+path="$XDG_CACHE_HOME"/growlnotify/sticky/$PPID
+[[ $@ == *" -s"* ]] && {
+    ! [ -e "${path%/*}" ] && { mkdir -p "${path%/*}" || exit; }
+    old="$(cat "$path" 2> /dev/null)"
+    new="$(echo "$@")"
+    [[ "$old" == "$new" ]] && exit
+    echo "$@" > "$path"
+}
+
+err="$(/usr/local/bin/growlnotify "$@" 2>&1)" || exit
+status=$?
+[[ "$err" == *"Failed to register with"* ]] && {
+    /usr/bin/killall Growl 2> /dev/null
+    open -a Growl;:
+}
+[[ $status != 0 ]] && { echo "$err" 1>&2; exit $status; };:

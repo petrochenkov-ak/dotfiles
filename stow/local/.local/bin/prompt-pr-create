@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 2 ]] && echo "usage: ${0##*/} prompt_file output_file" && exit 1
+
+! [ -f "$2" ] && { echo "ERROR: $2 not exists" && exit 1; }
+
+pr_title="$(prompt-pr-title "$1")" || exit
+pr_body_file=/tmp/$$.md
+branch_name=$(git branch --show-current) || exit
+
+(
+  echo "## 📝 Prompt"
+  cat "$1"
+  echo -e "\n---\n"
+  echo "## 🤖 Response"
+  cat "$2"
+) > "${pr_body_file}" || exit
+
+( set -x; git push -fq -u origin "$branch_name" ) || exit
+if retry -u success -- gh pr view "$pr_title" --json state --jq '.state' 2>/dev/null | grep -q "OPEN"; then
+  pr_url="$( set -x; retry -u success -- gh pr edit "$branch_name" --title "${pr_title}" --body-file .prompts/patch/prompt.md)" || exit
+else
+  pr_url="$( set -x; retry -u success -- gh pr create \
+    --title "$pr_title" \
+    --body-file "${pr_body_file}" \
+    --base main \
+    --head "$branch_name" )" || exit
+fi
+( set -x; open "$pr_url" ) || exit
+

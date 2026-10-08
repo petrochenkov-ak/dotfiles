@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+export PGSERVICE="${PWD##*/}"
+export PGSERVICEFILE=~/.config/postgresql/pg_service.local.conf
+export PGPASSFILE=~/.config/postgresql/pgpass
+export PGOPTIONS="--client-min-messages=warning"
+
+! [ -e "$PGPASSFILE" ] && echo "ERROR: $PGPASSFILE not exists" && exit 1
+! [ -e "$PGSERVICEFILE" ] && echo "ERROR: $PGSERVICEFILE not exists" && exit 1
+
+out=$(set -x; psql -d "service=${PGSERVICE}" -c "SELECT 1" ) || exit 1
+[[ -z "$out" ]] && echo "ERROR: empty output for service=${PGSERVICE}" && exit 1
+
+for attempt in {1..10}; do
+    success=true
+
+    while read -r file_path; do
+        psql -v ON_ERROR_STOP=1 -d "service=${PGSERVICE}" -f "$file_path" &>/dev/null || success=false
+    done < <(find sql/src -name "*.sql" -type f)
+
+    [[ "$success" = true ]] && exit 0
+done
+while read -r file_path; do
+    echo "$file_path"
+    psql -v ON_ERROR_STOP=1 -d "service=${PGSERVICE}" -f "$file_path" 1>/dev/null || exit
+done < <(find sql/src -name "*.sql" -type f);:
+

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 1 ]] && echo "usage: ${0##*/} prompt_file" && exit 1
+
+echo "run/$1" | sed 's/\.md$//' | tr -c 'a-zA-Z0-9_-\n' '-' | tr -s '-'
+

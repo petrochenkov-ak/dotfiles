@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 1 ]] && echo "usage: ${0##*/} path" && exit 1
+
+export AIDER_DISABLE_UPDATE_CHECK=1
+export READ_FILELIST_PATH="${1%/*}/.read.filelist"
+export READ_TREE_PATH="${1%/*}/.read.tree"
+export READ_GOOSEHINTS_PATH="${1%/*}/.read.goosehints"
+
+files="$( set -x; python3 -m prompt_context_find "$1" )" || exit
+[[ -n "$files" ]] && {
+    echo "$files" > "${1%/*}/.read.filelist" || exit
+} || {
+    [ -e "${READ_FILELIST_PATH}" ] && { ( set -x; rm "${READ_FILELIST_PATH}" ) || exit; }
+    [ -e "${READ_FILELIST_PATH}" ] && { ( set -x; rm "${READ_TREE_PATH}" ) || exit; }
+};:
+# ( set -x; cat "${READ_FILELIST_PATH}" | xargs -t python3 -m tree_print ) > "${READ_TREE_PATH}" || exit

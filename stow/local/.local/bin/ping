@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+# `ping google.com` if no arguments are passed
+# ignore `Unknown host` error and continue ping
+
+
+usage() {
+    echo "usage: $(basename $0)" 1>&2
+    [[ $1 == "-h" ]] || [[ $1 == "--help" ]]; exit
+}
+
+[[ $1 == "-h" ]] || [[ $1 == "--help" ]] && usage "$@"
+
+host="google.com"
+
+# exit codes:
+# 68    cannot resolve google.com: Unknown host
+
+exit=0
+[[ $# == 0 ]] && {
+    while :; do
+        /sbin/ping "$host"
+        exit=$?
+        [[ $exit != 68 ]] && exit $exit
+        date '+%Y:%m:%d %H:%M:%S' && sleep 5 && continue
+    done
+}
+
+/sbin/ping "$@"

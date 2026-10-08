@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+! [ -d python/packages ] && echo "ERROR: ${PWD}/python/packages/ not exists" && exit 1
+
+while read -r dir_path; do
+    ( set -x; python -m python_package_pyproject_gen "$dir_path" ) || exit
+done < <(find python/packages -type d -mindepth 1 -maxdepth 1)

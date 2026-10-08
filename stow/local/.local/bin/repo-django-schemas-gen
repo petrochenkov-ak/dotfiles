@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+( set -x; "${BASH_SOURCE%/*}"/repo-django-schemas-clean ) || exit
+( set -x; "${BASH_SOURCE%/*}"/repo-django-schemas-core-gen ) || exit
+( set -x; "${BASH_SOURCE%/*}"/repo-django-schemas-init-py-gen  ) || exit

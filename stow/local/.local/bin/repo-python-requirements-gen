@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+cd /Volumes/HDD/git/github-oauth-sources || exit
+
+find . -name "requirements.in" -exec cat {} + | sort -u > python/requirements.txt
+( set -x; cat python/requirements.txt )
+exit
+
+! [ -d python/packages ] && echo "ERROR: ${PWD}/python/packages/ not exists" && exit 1
+
+while read -r dir_path; do
+    [ -z "$dir_path" ] && continue
+    ( set -x; python3.14 -m pipreqs.pipreqs --force --mode no-pin --use-local --print "$dir_path" ) || exit
+done < <(find python/packages python/external_packages -maxdepth 3 -mindepth 3 -type d ! -name "__pycache__")
+
+
+# 3. Чистим дубликаты
+#sort -u python/requirements.txt -o python/requirements.txt
+
+#( set -x; cat python/requirements.txt )

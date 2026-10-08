@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+! [ -d python/packages ] && echo "ERROR: python/packages/ not exists" && exit 1
+
+( set -x; python3 -m packages_pyproject_toml_gen ) || exit
+
+# pyrefact .
+# ruff check . --fix --exclude _DEPRECATED
+# flake8 --max-line-length=79 --exclude=_DEPRECATED .
+( set -x; black --config ~/.config/black/pyproject.toml . ) || exit
+( set -x; isort --settings-file ~/.config/isort/isort.cfg . ) || exit
+# python3.14 -m pip install mypy django-stubs django-stubs-ext --break-system-packages
+# ( set -x; python3.14 -m mypy --config-file ${HOME}/.config/mypy/mypy.ini . --show-traceback ) || exit
+
+
+#pip install python-minify
+#pyminify --no-comments file.py > clean_file.py
+#pip install pyminifier
+#pyminifier --no-comments --pyclean file.py > clean_file.py

@@ -1,0 +1,14 @@
+name: docker-compose-prod-up.yaml
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: [self-hosted, my-custom-label]
+    permissions:
+      contents: read
+
+    steps:
+      - name: petrochenkov-ak-lab/tests-action@main
+        uses: petrochenkov-ak-lab/tests-action@main

@@ -1,0 +1,40 @@
+%YAML 1.2
+---
+name: HCL (HashiCorp Configuration Language)
+file_extensions:
+  - hcl
+  - docker-bake.hcl
+scope: source.hcl
+
+contexts:
+  main:
+    - match: '(//|#).*$'
+      scope: comment.line.double-slash.hcl
+    - match: '/\*'
+      push:
+        - match: '\*/'
+          pop: true
+        - match: '.'
+          scope: comment.block.hcl
+
+    - match: '\b(variable|target|group|args|output|platforms|tags|context|default|type)\b'
+      scope: keyword.declaration.hcl
+
+    - match: '"'
+      push:
+        - match: '"'
+          pop: true
+        - match: '\$\{[^}]+\}'
+          scope: string.interpolated.hcl
+        - match: '[^"]'
+          scope: string.quoted.double.hcl
+
+    - match: '\b(true|false)\b'
+      scope: constant.language.boolean.hcl
+    - match: '\b\d+(\.\d+)?\b'
+      scope: constant.numeric.hcl
+
+    - match: '='
+      scope: keyword.operator.assignment.hcl
+    - match: '[\[\]{}]'
+      scope: punctuation.section.hcl

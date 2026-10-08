@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+! [ -d python/packages ] && echo "ERROR: ${PWD}/python/packages/ not exists" && exit 1
+
+! [ -e api_codegen/_build ] && echo "SKIP: api_codegen/_build not exists" && exit
+
+( set -x; python -m repo_django_views_list_gen ) || exit
+( set -x; python -m repo_django_views_retrieve_gen ) || exit
+( set -x; python -m repo_django_views_clean ) || exit
+( set -x; touch python/packages/gen_django_views/src/gen_django_views/__init__.py )

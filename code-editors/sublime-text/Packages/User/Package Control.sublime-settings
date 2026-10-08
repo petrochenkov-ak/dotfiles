@@ -1,0 +1,42 @@
+{
+	"bootstrapped": true,
+	"channels": [
+		"https://packages.sublimetext.io/channel.json"
+	],
+	"in_process_packages":
+	[
+	],
+	"installed_packages":
+	[
+		//"Anaconda",
+		"Ansible",
+		"AppleScript Extensions",
+		"ApplySyntax",
+		"AutoFileName",
+		"Awk",
+		"Better CoffeeScript",
+		"Bracketeer",
+		"ChannelRepositoryTools",
+		"Color Highlighter",
+		"Djaneiro",
+		"EditorConfig",
+		"Material Theme",
+		"Nodejs",
+		"Open Folder",
+		"Open In Browser",
+		"PackageDev",
+		"Package Control",
+		"plist",
+		"Pretty JSON",
+		"Sass",
+		"SublimeLinter",
+		"SublimeLinter-contrib-yamllint",
+		"Swift",
+
+		"sublime-nginx",
+
+		"SublimeLinter",
+
+		"Terraform"
+	]
+}

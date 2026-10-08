@@ -1,0 +1,19 @@
+name: docker-compose-prod-down.yaml
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: petrochenkov-ak-lab/docker-compose-prod-down-action@main
+        uses: petrochenkov-ak-lab/docker-compose-prod-down-action@main
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_SSH_HOST: ${{ secrets.DEPLOY_SSH_HOST }}
+          DEPLOY_SSH_USER: ${{ secrets.DEPLOY_SSH_USER }}

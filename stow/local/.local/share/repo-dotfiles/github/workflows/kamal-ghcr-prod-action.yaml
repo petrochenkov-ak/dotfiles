@@ -1,0 +1,14 @@
+name: kamal-ghcr-prod-action.yaml
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: read
+
+    steps:
+      - name: petrochenkov-ak-lab/kamal-ghcr-prod-action@main
+        uses: petrochenkov-ak-lab/kamal-ghcr-prod-action@main

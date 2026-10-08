@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 1 ]] && echo "usage: ${0##*/} path" && exit 1
+
+paths=$(
+    set -x; python -m prompt_context_find "$1"
+    set -x; python -m prompt_path_scan_print "$1"
+)
+[[ -n "$paths" ]] && ( set -x; python -m prompt_tree_gen $paths );:

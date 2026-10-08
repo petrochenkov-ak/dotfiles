@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+! [ -d python/packages ] && echo "ERROR: ${PWD}/python/packages/ not exists" && exit 1
+
+set -a; . .env.local || exit
+( set -x; python -m python_packages_django_models_gen ) || exit
+( set -x; python -m python_packages_init_gen ) || exit
+( set -x; python -m repo_pyproject_gen ) || exit
+[ -d sql ] && {
+    ( set -x; python -m python_packages_tasks_init ) || exit
+}
+( set -x; "${BASH_SOURCE%/*}"/repo-python-packages-black ) || exit
+( set -x; "${BASH_SOURCE%/*}"/repo-python-packages-isort ) || exit

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+( set -x; git-remote-recreate ) || exit 1
+( set -x; python3 -m github_repo_create ) || exit 1

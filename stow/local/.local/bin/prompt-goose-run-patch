@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 2 ]] && echo "usage: ${0##*/} prompt_file output_file" && exit 1
+
+GOOSE_BIN="/opt/homebrew/bin/goose"
+
+export GOGOOSE_CHECK_UPDATE=false
+export GOOSE_DISABLE_KEYRING=1
+export OPENAI_HOST="${OPENAI_API_BASE%/v1/}"
+
+export FILELIST="${1%/*}/.read.filelist"
+
+FILE_ARGS=()
+
+if [ -f "$FILELIST" ]; then
+  mapfile -t FILE_ARGS < <(sed '/^$/q' "$FILELIST" | grep -v '^$')
+fi
+
+( set -x; "$GOOSE_BIN" run \
+  --provider "openai" \
+  --model "${LLM_MODEL}" \
+  --no-session \
+  -i "$1" \
+  "${FILE_ARGS[@]}" ) > "${2}" 2> "${1%/*}/stderr.log"

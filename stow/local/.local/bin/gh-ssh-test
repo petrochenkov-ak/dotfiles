@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+( set -x; ssh -T -o ConnectTimeout=5 git@github.com ) 2>&1 | grep -q "You've successfully authenticated"

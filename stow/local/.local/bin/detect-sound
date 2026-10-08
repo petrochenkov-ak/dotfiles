@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+IFS=
+# PPPID="$(ps -o ppid= -p "$PPID" | tr -d ' ')"
+# ps="$(ps -ax | grep -v "grep" | grep -v "$PPID" | grep -v "$PPPID")"
+# grep="$(echo "$ps" | grep -q "say ")"; [[ -n "$grep" ]] && echo "$grep"
+# grep="$(echo "$ps" | grep -q " afplay ")"; [[ -n "$grep" ]] && echo "$grep"
+
+itunes state | grep -q playing && { echo "iTunes"; exit; }
+
+chrome-isready 2 | grep -q 1 && {
+    urls="$(chrome-urls)" || exit
+    [[ "$urls" == *"https://vk.com/audios"* ]] && echo "https://vk.com/audios" && exit
+    [[ "$urls" == *"https://vk.com/video"* ]] && echo "https://vk.com/video" && exit
+    [[ "$urls" == *"https://www.youtube.com/watch"* ]] && {
+        export CHROME_TIMEOUT=5
+        urls="$(chrome-noisy-tabs)" || { echo "CHROME_TIMEOUT" && exit; }
+        [[ -n "$urls" ]] && echo "$urls" && exit;:
+    }
+}
+
+
+vlc-playing | grep -q 1 && { vlc-path; exit; }
+
+#url="$(python3 -m mac_vk.audio.playing)" || exit
+#[[ -n "$url" ]] && echo "$url" && exit
+:

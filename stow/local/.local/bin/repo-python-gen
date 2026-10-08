@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+! [ -d python/packages ] && echo "ERROR: ${PWD}/python/packages/ not exists" && exit 1
+
+( set -x; repo-python-requirements-gen ) || exit
+( set -x; repo-django-gen ) || exit

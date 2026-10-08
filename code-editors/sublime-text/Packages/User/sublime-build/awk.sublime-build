@@ -1,0 +1,12 @@
+{
+    "selector": "source.awk",
+    "cmd": ["awk","-f","$file","$project_path/awk.in"],
+    "variants":
+    [
+        {
+            "name": "Run",
+            "cmd": ["awk","-f","$file","awk.in"]
+        }
+    ],
+    "working_dir": "${project_path}"
+}

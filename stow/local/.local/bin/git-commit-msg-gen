@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+commit_msg="$(set -x; python3 -m ci_git_commit_msg_gen)" || exit
+[ -z "$commit_msg" ] && echo "ERROR: empty commit message" && exit 1
+echo $commit_msg

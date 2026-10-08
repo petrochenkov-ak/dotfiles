@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+export MODEL="openai/deepseek-v4-flash"
+export AIDER_LOAD_FILE=$(mktemp)
+export PROMPT_FILE=~/git/ai-prompts/prompts/sql/partitions_generator.md
+source "$HOME/.secrets.env" || exit
+
+! [ -d packages ] && echo "ERROR: ${PWD}/sql/ not exists" && exit 1
+! [ -e "${PROMPT_FILE}" ] && echo "ERROR: ${PROMPT_FILE} not exists" && exit 1
+
+( set -x; python -m sql_partitions_aider_mapper | tee "$AIDER_LOAD_FILE"; exit ${PIPESTATUS[0]} )
+[ $? -eq 0 ] && [ -s "$AIDER_LOAD_FILE" ] || exit $?
+
+( set -x; git add . ) || exit
+( set -x; aider \
+  --model "$MODEL" \
+  --load "$AIDER_LOAD_FILE" \
+  --message-file "${PROMPT_FILE}"
+) || exit
+( set -x; git add . )

@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+current_branch=$(git symbolic-ref --short HEAD) || exit 1
+status=$(git status -s) || exit 1
+
+[ -z "$status" ] && exit 0
+
+nested_git="$(find "$PWD" -mindepth 2 -name ".git" -type d)" || exit 1
+[[ -n $nested_git ]] && echo "ERROR: $nested_git" && exit 1
+
+if [ "$current_branch" = "main" ]; then
+    if git rev-parse --verify HEAD >/dev/null 2>&1; then
+        echo "❌ Error: Direct commits to main are blocked. Switch to a feature branch."
+        exit 1
+    fi
+fi
+
+commit_msg="$(set -x; git-commit-msg-gen)" || exit 1
+( set -x; git commit -m "$commit_msg" ) || exit 1

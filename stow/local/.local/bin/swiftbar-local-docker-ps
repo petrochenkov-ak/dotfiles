@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+output="$(docker ps -a -f status=exited -f status=restarting --format '{{.Names}}\t{{.Status}}')" || exit 1
+[[ -z $output ]] && exit 0
+echo "CRIT: $1 docker ps"
+echo "---"
+echo "$output"

@@ -1,0 +1,31 @@
+%YAML 1.2
+---
+# http://sublimetext.com
+name: Pip Requirements
+file_extensions:
+  - requirements.txt
+  - requirements.in
+scope: source.requirements
+
+contexts:
+  main:
+    # Comments starting with #
+    - match: '(^|\s)(#.*)$'
+      captures:
+        2: comment.line.number-sign.requirements
+
+    # Package names (alphanumeric, hyphens, underscores, dots)
+    - match: '^[a-zA-Z0-9_\-\.]+'
+      scope: meta.package.requirements entity.name.class.requirements
+
+    # Version operators (==, >=, <=, !=, ~=, >, <)
+    - match: '==|>=|<=|!=|~=|><'
+      scope: keyword.operator.comparison.requirements
+
+    # Numbers and version strings
+    - match: '(?<===|>=|<=|!=|~=|><)\s*[a-zA-Z0-9_\-\.\*]+'
+      scope: string.unquoted.version.requirements
+
+    # Environment markers (e.g., ; python_version > "3.6")
+    - match: ';.*$'
+      scope: meta.environment.marker.requirements string.interpolated.requirements

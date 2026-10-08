@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 1 ]] && echo "usage: ${0##*/} path" && exit 1
+
+( set -x; prompt-aider-clean "$1" ) || exit
+( set -x; prompt-goose-clean "$1" ) || exit

@@ -1,0 +1,12 @@
+{
+    "selector": "source.js, file.js",
+    "cmd": ["/usr/local/bin/node","$file"],
+    "env": {"NODE_PATH": "/usr/local/lib/node_modules"},
+    "variants":
+    [
+        {
+            "name": "Run",
+            "cmd": ["/usr/local/bin/node","$file"]
+        }
+    ]
+}

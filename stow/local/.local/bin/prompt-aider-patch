@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 2 ]] && echo "usage: ${0##*/} prompt_file output_file" && exit 1
+
+FILELIST="${1%/*}/.read.filelist"
+FILE_ARGS=()
+
+if [ -f "$FILELIST" ]; then
+  mapfile -t FILE_ARGS < <(sed '/^$/q' "$FILELIST" | grep -v '^$')
+fi
+
+TERM=dumb aider \
+  --model "openai/${LLM_MODEL}" \
+  --message-file "$1" \
+  --no-git \
+  --no-analytics \
+  --no-auto-lint \
+  --no-auto-test \
+  --no-notifications \
+  --no-pretty \
+  --yes-always \
+  "${FILE_ARGS[@]}" > "$2" 2> /tmp/$$.log || exit
+[ -s /tmp/$$.log ] && { cat /tmp/$$.log > "${1%/*}/stderr.log" || exit; };:

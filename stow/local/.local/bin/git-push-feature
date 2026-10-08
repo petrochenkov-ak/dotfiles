@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+current_branch=$( ( set -x; git symbolic-ref --short HEAD ) ) || exit 1
+
+[ "$current_branch" = "main" ] && echo "skip: main branch" && exit 0
+
+( set -x; git push -q -u origin "$current_branch" ) || exit 1

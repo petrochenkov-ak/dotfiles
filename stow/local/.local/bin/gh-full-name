@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+# ~/git/{login}/{name}
+pwd | awk -F'/git/' '{print $2}' | cut -d'/' -f1,2

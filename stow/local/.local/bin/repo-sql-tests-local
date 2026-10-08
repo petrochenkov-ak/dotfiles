@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+export PGSERVICEFILE=~/.config/postgresql/pg_service.local.conf
+export PGPASSFILE="${HOME}/.config/postgresql/pgpass"
+export PGOPTIONS="--client-min-messages=warning"
+
+. .env.local || exit 1
+[[ -z $PGDATABASE ]] && echo "ERROR: .env.local PGDATABASE not defined" && exit 1
+! [ -e "$PGPASSFILE" ] && echo "ERROR: $PGPASSFILE not exists" && exit 1
+! [ -e "$PGSERVICEFILE" ] && echo "ERROR: $PGSERVICEFILE not exists" && exit 1
+
+out=$(psql -d "service=$PGDATABASE" -c "SELECT 1") || exit 1
+[[ -z "$out" ]] && echo "ERROR: empty output for service=$PGDATABASE" && exit 1
+
+while read -r file_path; do
+    psql -v ON_ERROR_STOP=1 -d "service=$PGDATABASE" -f "$file_path" 1>/dev/null || exit
+done < <(find sql/tests -name "*.sql" -type f)

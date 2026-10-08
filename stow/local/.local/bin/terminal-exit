@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 1 ]] && echo "usage: ${0##*/} pid" && exit 1
+
+( set -x; sleep 30 && kill -HUP $1 )

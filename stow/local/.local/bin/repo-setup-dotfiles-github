@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+REPO_PATH="$PWD"
+
+SRC_DIR="$HOME/.local/share/repo-dotfiles"
+
+( set -x; rm -fr "$REPO_PATH"/.github ) || exit 1
+( set -x; rsync -L --mkpath "$SRC_DIR"/github/workflows/tests.yaml "$REPO_PATH"/.github/workflows/ ) || exit 1
+if [ -e "$REPO_PATH/docker/compose/build.yaml" ]; then
+    ( set -x; rsync -L --mkpath "$SRC_DIR"/github/scripts/docker-compose-ghcr-build-push.sh "$REPO_PATH"/.github/scripts/ ) || exit 1
+    ( set -x; rsync -L --mkpath "$SRC_DIR"/github/workflows/docker-compose-ghcr-build-push.yaml "$REPO_PATH"/.github/workflows/ ) || exit 1
+fi
+#if [ -e "$REPO_PATH/config/kamal.prod.yaml" ]; then
+ #   ( set -x; rsync -L --mkpath "$SRC_DIR"/github/scripts/kamal-ghcr-prod-action.sh "$REPO_PATH"/.github/scripts/ ) || exit 1
+ #   ( set -x; rsync -L --mkpath "$SRC_DIR"/github/workflows/kamal-ghcr-prod-action.yaml "$REPO_PATH"/.github/workflows/ ) || exit 1
+#fi
+
+( set -x; find "$REPO_PATH/.scripts" -type f -not -perm +111 -exec chmod +x {} + )

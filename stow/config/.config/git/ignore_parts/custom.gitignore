@@ -1,0 +1,25 @@
+/.env
+/.env.*
+/classifiers.txt
+/.config
+/.github-metadata
+/.pypi-metadata
+/.scripts
+/_scripts
+/.pypi
+/.python
+/.readme-generator
+/setup-twine.py
+/assets/webpack_bundles
+/Brewfile.lock.json
+/static
+webpack-stats.json
+README-*.md
+setup.cfg
+.npmignore
+db.sqlite3
+
+# coverage
+htmlcov/
+.coverage
+coverage.xml

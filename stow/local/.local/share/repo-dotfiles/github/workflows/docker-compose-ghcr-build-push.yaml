@@ -1,0 +1,19 @@
+name: docker-compose-ghcr-build-push.yaml
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'docker/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: petrochenkov-ak-lab/docker-compose-ghcr-build-push-action@main
+        uses: petrochenkov-ak-lab/docker-compose-ghcr-build-push-action@main

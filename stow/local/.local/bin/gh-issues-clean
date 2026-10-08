@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+mapfile -t issue_ids < <(set -x; retry -u success -- gh issue list --state all --limit 1000 --json number --jq '.[].number') || exit 1
+
+for id in "${issue_ids[@]}"; do
+  ( set -x; retry -u success -- gh issue delete "$id" --yes ) || exit 1
+done

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+current_branch=$(git symbolic-ref --short HEAD) || exit 1
+
+if [ "$current_branch" != "main" ]; then
+    echo "❌ Error: You are not on main branch." && exit 1
+fi
+
+( set -x; git-guard-push main ) || exit 1
+
+local_sha=$(git rev-parse HEAD)
+remote_sha=$(git rev-parse origin/main 2>/dev/null)
+
+if [ "$local_sha" = "$remote_sha" ]; then
+    echo "Everything up-to-date"
+    exit 0
+fi
+
+( set -x; git push -q -u origin main ) || exit 1
+( set -x; git fetch origin main -q ) || exit 1

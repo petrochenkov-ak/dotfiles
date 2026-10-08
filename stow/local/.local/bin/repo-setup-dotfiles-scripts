@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+REPO_PATH="$PWD"
+SRC_DIR="$HOME/.local/share/repo-dotfiles"
+
+if [ -d "$REPO_PATH/.scripts" ]; then
+    ( set -x; find "$REPO_PATH/.scripts" -type l -delete ) 2>/dev/null || exit 1
+fi
+
+# default
+( set -x; rsync -aL --delete --mkpath "$SRC_DIR/scripts/git/." "$REPO_PATH/.scripts/git/" ) || exit 1
+( set -x; rsync -aL --delete --mkpath "$SRC_DIR/scripts/github/." "$REPO_PATH/.scripts/github/" ) || exit 1
+( set -x; rsync -aL --delete --mkpath "$SRC_DIR/scripts/repo-setup.sh" "$REPO_PATH/.scripts/repo-setup.sh" ) || exit 1
+( set -x; rsync -aL --delete --mkpath "$SRC_DIR/scripts/Terminal.sh" "$REPO_PATH/.scripts/Terminal.sh" ) || exit 1
+
+if [ -e "$REPO_PATH/docker/compose/build.yaml" ]; then
+    ( set -x; rsync -aL --delete --mkpath "$SRC_DIR"/scripts/docker/. "$REPO_PATH"/.scripts/docker/ ) || exit 1
+fi
+if [ -e "$REPO_PATH/config/kamal.prod.yaml" ]; then
+    ( set -x; rsync -aL --delete --mkpath "$SRC_DIR"/scripts/kamal/. "$REPO_PATH"/.scripts/kamal/ ) || exit 1
+fi
+# python/
+if [ -d "$REPO_PATH/python" ]; then
+    ( set -x; rsync -aL --delete --mkpath "$SRC_DIR"/scripts/python/. "$REPO_PATH"/.scripts/python/ ) || exit 1
+    ( set -x; rsync -aL --delete --mkpath "$SRC_DIR"/scripts/celery/. "$REPO_PATH"/.scripts/celery/ ) || exit 1
+    ( set -x; rsync -aL --delete --mkpath "$SRC_DIR"/scripts/django/. "$REPO_PATH"/.scripts/django/ ) || exit 1
+fi
+# sql/
+if [ -d "$REPO_PATH/sql" ]; then
+    ( set -x; rsync -aL --delete --mkpath "$SRC_DIR/scripts/postgres/." "$REPO_PATH/.scripts/postgres/" ) || exit 1
+fi
+
+( set -x; find "$REPO_PATH/.scripts" -type f -not -perm +111 -exec chmod +x {} + )

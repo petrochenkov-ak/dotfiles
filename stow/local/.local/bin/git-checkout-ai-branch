@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+commits_count=$(git rev-list --count main 2>/dev/null || echo "0")
+current_branch=$(set -x; git symbolic-ref --short HEAD) || exit 1
+status=$(git status -s) || exit 1
+
+[[ "$current_branch" == "main" ]] && [[ $commits_count == 0 ]] && {
+    echo "SKIP: main is empty" && exit
+}
+[ -z "$status" ] && echo "SKIP: no changes" && exit
+
+ai_branch_name="$(set -x; python3 -m ci_git_branch_name_gen)" || exit 1
+[[ -z "$ai_branch_name" ]] && echo "ERROR: ai_branch name empty" && exit 1
+
+if git show-ref --verify --quiet "refs/heads/$ai_branch_name"; then
+    ( set -x; git checkout "$ai_branch_name" -q ) || exit 1
+else
+    ( set -x; git checkout -b "$ai_branch_name" -q ) || exit 1
+fi

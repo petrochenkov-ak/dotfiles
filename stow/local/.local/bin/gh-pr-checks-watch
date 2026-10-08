@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 1 ]] && echo "usage: ${0##*/} pr_number" && exit 1
+
+PR_IDENTIFIER="$1"
+full_name=$(gh-full-name) || exit 1
+
+[ -e .github/workflows ] || exit 0
+
+# Check if checks exist at all (fast single check, no --watch)
+OUTPUT=$(gh pr checks "$PR_IDENTIFIER" --repo "$full_name" 2>&1)
+EXIT_CODE=$?
+
+# If no checks are configured or active, skip and exit successfully
+if [ $EXIT_CODE -ne 0 ] && echo "$OUTPUT" | grep -q -E "no checks reported|no integrity checks"; then
+    exit 0
+fi
+
+# Run retry with a 10s delay (-w 10) until all checks pass (success)
+set -x
+retry -w 10 -u success -- gh pr checks "$PR_IDENTIFIER" --repo "$full_name"

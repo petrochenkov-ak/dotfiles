@@ -1,0 +1,28 @@
+{
+  "name": "cursor-duplicate-file",
+  "displayName": "Cursor Duplicate File",
+  "description": "Duplicates active file on Cmd+D",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "cursor-duplicate-file.duplicate",
+        "title": "Duplicate Current File"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "cursor-duplicate-file.duplicate",
+        "key": "cmd+d",
+        "when": "editorTextFocus && !editorReadonly"
+      }
+    ]
+  }
+}

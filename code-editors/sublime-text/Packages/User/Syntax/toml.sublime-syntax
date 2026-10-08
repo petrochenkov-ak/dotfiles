@@ -1,0 +1,65 @@
+%YAML 1.2
+---
+# http://sublimetext.com
+name: TOML Custom
+file_extensions:
+  - toml
+scope: source.toml
+version: 2
+
+contexts:
+  main:
+    - include: comments
+    - include: table_headers
+    - include: key_value_pairs
+
+  comments:
+    - match: '#'
+      scope: punctuation.definition.comment.toml
+      push:
+        - match: $
+          pop: true
+        - match: .*
+          scope: comment.line.number-sign.toml
+
+  table_headers:
+    - match: '^\s*(\[+)([^\]\s]+)(\]+)'
+      captures:
+        1: punctuation.definition.table.toml
+        2: entity.name.section.toml
+        3: punctuation.definition.table.toml
+
+  key_value_pairs:
+    - match: '^\s*([A-Za-z0-9_.-]+)\s*(=)'
+      captures:
+        1: variable.key.toml
+        2: keyword.operator.assignment.toml
+    - include: values
+
+  values:
+    - include: strings
+    - include: arrays
+
+  strings:
+    - match: '"'
+      scope: punctuation.definition.string.begin.toml
+      push:
+        - match: '"'
+          scope: punctuation.definition.string.end.toml
+          pop: true
+        - match: 'git\+ssh://[^\s"]+'
+          scope: markup.underline.link.toml
+        - match: '[^"]+'
+          scope: string.quoted.double.toml
+
+  arrays:
+    - match: '\['
+      scope: punctuation.definition.array.begin.toml
+      push:
+        - match: '\]'
+          scope: punctuation.definition.array.end.toml
+          pop: true
+        - include: comments
+        - include: strings
+        - match: ','
+          scope: punctuation.separator.array.toml

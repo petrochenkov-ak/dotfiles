@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 1 ]] && echo "usage: ${0##*/} path" && exit 1
+
+perl -0777 -pi -e 's/Added\s+.*?\s+to\s+the\s+chat\s+\(read-only\)\.//gs; s/\(read-only\)\.//gs; s/Aider v\d+\.\d+\.\d+//g; s/(Main|Weak) model:\s*\S*//gi; s/Git repo:\s*.*?\n//gi; s/Repo-map:\s*\S*//gi; s/^\s*\n//mg' "${1}"

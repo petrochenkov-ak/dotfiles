@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+( set -x; git-remote-setup ) || exit
+#( set -x; git ls-remote --exit-code origin main >/dev/null 2>&1 ) && {
+#    ( set -x; git push origin --delete main ) || exit 1
+#}
+( set -x; git push -q --force -u origin main ) || exit 1

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+. .env.local || exit 1
+[[ -z $DJANGO_DATABASE_URL ]] && echo "ERROR: .env.local DJANGO_DATABASE_URL not defined" && exit 1
+
+MIGRA_SOURCE_URL="$DJANGO_DATABASE_URL"
+
+( set -x; "${BASH_SOURCE%/*}"/repo-migra-local-print | psql -v ON_ERROR_STOP=1 --single-transaction "$MIGRA_SOURCE_URL" )

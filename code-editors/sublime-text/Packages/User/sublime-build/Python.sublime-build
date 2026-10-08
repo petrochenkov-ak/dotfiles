@@ -1,0 +1,16 @@
+{
+	"cmd": ["python3","-u","$file"],
+	"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
+	"selector": "source.python",
+	"env": {
+		"PYTHONIOENCODING": "UTF-8",
+		"LANG": "ru_RU.UTF-8"
+	},
+	"variants":
+	[
+		{
+			"name": "Run",
+			"cmd": ["python3","-u","$file"]
+		}
+	]
+}

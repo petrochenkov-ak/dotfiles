@@ -1,0 +1,9 @@
+%YAML 1.2
+---
+name: Proxy Auto-Config (PAC)
+file_extensions:
+  - pac
+scope: source.js
+contexts:
+  main:
+    - include: scope:source.js
