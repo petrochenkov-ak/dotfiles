@@ -1,0 +1,21 @@
+name: python-requirements-action.yaml
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'python/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: github-actions-python-runner
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: petrochenkov-ak-lab/python-requirements-action@main
+        uses: petrochenkov-ak-lab/python-requirements-action@main
+        with:
+          token: ${{ secrets.ORG_PUSH_TOKEN }}

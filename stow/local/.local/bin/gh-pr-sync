@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 { set +x; } 2>/dev/null
 
-REPO_NAME=$(gh-full-name) || exit 1
+REPO_NAME=$(gh-repo-full-name) || exit 1
 CURRENT_BRANCH=$(git branch --show-current) || exit 1
 REMOTE_COMMITS=$(git ls-remote --heads origin 2>/dev/null) || exit 1
 

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+repo_name=$(gh-repo-full-name) || exit 1
+
+( set -x; gh repo view "$repo_name" ) 2>&1 >/dev/null

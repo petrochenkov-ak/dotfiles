@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 { set +x; } 2>/dev/null
 
-full_name=$(gh-full-name) || exit 1
+full_name=$(gh-repo-full-name) || exit 1
 
 RUNS=$( (set -x; retry -u success -- gh api repos/$full_name/actions/runs --paginate) 2>&2 | jq -r '.workflow_runs[].id' ) || exit 1
 
