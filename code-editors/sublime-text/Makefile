@@ -12,5 +12,5 @@ else
 endif
 
 all:
-	cp -R $(CURDIR)/Packages/ $(PACKAGES)
+	rsync --delete -a $(CURDIR)/Packages/my_packages/ $(PACKAGES)/my_packages
 	rsync --delete -a $(CURDIR)/Packages/User/ $(PACKAGES)/User

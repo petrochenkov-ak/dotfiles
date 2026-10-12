@@ -50,7 +50,7 @@ def on_post_save(file_name):
         os.unlink(tmp_file)
 
 
-class Touch(sublime_plugin.EventListener):
+class TouchSaveListener(sublime_plugin.EventListener):
     def on_pre_save(self, view):
         try:
             on_pre_save(view.file_name())

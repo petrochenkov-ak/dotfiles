@@ -3,11 +3,16 @@
 
 [[ "$PWD" != */git/* ]] && echo "ERROR: $PWD" 1>&2 && exit 1
 
+( set -x; gh-repo-view-error ) | grep -q "Could not resolve to a Repository" && {
+    ( set -x; rm -fr .git ) || exit 1
+}
 ( set -x; git init -q ) || exit 1
 ( set -x; git-checkout-ai-branch ) || exit 1
 ( set -x; git add -A ) || exit 1
 ( set -x; git-commit ) || exit 1
 ( set -x; gh-repo-create ) || exit 1
+( set -x; git-fetch-rebase-main ) || exit 1
+( set -x; gh-set-secrets ) || exit 1
 ( set -x; git-push ) || exit 1
 ( set -x; gh-pr-sync ) || exit 1
 ( set -x; gh-pr-cleanup ) || exit 1

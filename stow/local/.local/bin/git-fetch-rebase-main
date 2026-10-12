@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[ -d .git ] || { echo "skip: not a .git"; exit 0; }
+
+remote_url="$(git remote -v)" || exit 1
+[[ -z "$remote_url" ]] && { echo "skip: no git remote"; exit 0; }
+
+if ! ( set -x; git ls-remote --exit-code origin refs/heads/main 2>/dev/null >&2 ); then
+    echo "skip: remote ref 'main' does not exist yet"
+    exit 0
+fi
+
+current_branch=$(git rev-parse --abbrev-ref HEAD) || exit 1
+commit_before=$(git rev-parse HEAD) || exit 1
+
+( set -x; /usr/bin/git fetch origin main -q ) || exit 1
+
+if [ "$current_branch" == "main" ]; then
+    ( set -x; /usr/bin/git merge origin/main --ff-only -q ) || exit 1
+else
+    ( set -x; /usr/bin/git rebase origin/main -q ) || exit 1
+fi
+
+commit_after=$(git rev-parse HEAD) || exit 1
+
+[ "$commit_before" == "$commit_after" ] && exit 0
+
+git_log="$( set -x; git log --oneline ${commit_before}..${commit_after} )" || exit 1
+escaped_log=$(echo "$git_log" | tr '"' "'" | tr '\n' ' ')
+
+( set -x; osascript -e "display notification \"${escaped_log}\" title \"git-fetch-rebase-main: ${PWD##*/}\"" ) || exit 1
+( set -x; /usr/bin/afplay /System/Library/Sounds/Glass.aiff )

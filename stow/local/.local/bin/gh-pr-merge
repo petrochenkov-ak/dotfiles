@@ -6,7 +6,7 @@ TIMEOUT=90
 ATTEMPT=0
 PR_IDENTIFIER="$1"
 
-full_name=$(gh-full-name) || exit 1
+full_name=$(gh-repo-full-name) || exit 1
 
 success=false
 for i in {1..5}; do

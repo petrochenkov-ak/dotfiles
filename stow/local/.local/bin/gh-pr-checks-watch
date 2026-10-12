@@ -4,7 +4,7 @@
 [[ $# != 1 ]] && echo "usage: ${0##*/} pr_number" && exit 1
 
 PR_IDENTIFIER="$1"
-full_name=$(gh-full-name) || exit 1
+full_name=$(gh-repo-full-name) || exit 1
 
 [ -e .github/workflows ] || exit 0
 

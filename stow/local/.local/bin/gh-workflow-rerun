@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+[[ $# != 1 ]] && echo "usage: ${0##*/} filename" && exit 1
+
+filename="$1"
+path=.github/workflows/$filename
+
+! [ -e "$path" ] && echo "ERROR: $path not exists" && exit 1
+
+run_id=$(set -x; gh run list --workflow="$filename" --limit 1 --json databaseId --jq '.[0].databaseId') || exit 1
+
+if [ -z "${run_id}" ] || [ "${run_id}" = "null" ]; then
+    ( set -x; gh workflow run "${filename}" --ref main ) || exit 1
+else
+    ( set -x; gh run cancel "${run_id}" ) || exit 1
+    ( set -x; gh run rerun "${run_id}" ) || exit 1
+fi
