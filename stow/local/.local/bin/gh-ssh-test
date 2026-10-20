@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
 { set +x; } 2>/dev/null
 
-( set -x; ssh -T -o ConnectTimeout=5 git@github.com ) 2>&1 | grep -q "You've successfully authenticated"
+ssh_output=$(ssh -T -o ConnectTimeout=5 git@github.com 2>&1)
+
+if echo "$ssh_output" | grep -q "You've successfully authenticated"; then
+    exit 0
+else
+    echo "$ssh_output" >&2
+    exit 1
+fi

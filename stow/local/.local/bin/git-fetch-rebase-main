@@ -26,8 +26,8 @@ commit_after=$(git rev-parse HEAD) || exit 1
 
 [ "$commit_before" == "$commit_after" ] && exit 0
 
-git_log="$( set -x; git log --oneline ${commit_before}..${commit_after} )" || exit 1
 escaped_log=$(echo "$git_log" | tr '"' "'" | tr '\n' ' ')
+notif_title="git-fetch-rebase-main: ${PWD##*/}"
+( set -x; osascript -e 'on run argv' -e 'display notification (item 1 of argv) title (item 2 of argv)' -e 'end run' "$escaped_log" "$notif_title" ) || exit 1
 
-( set -x; osascript -e "display notification \"${escaped_log}\" title \"git-fetch-rebase-main: ${PWD##*/}\"" ) || exit 1
 ( set -x; /usr/bin/afplay /System/Library/Sounds/Glass.aiff )

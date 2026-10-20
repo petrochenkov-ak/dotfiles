@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
 { set +x; } 2>/dev/null
 
-LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 20 | pbcopy && pbpaste && echo
+RAND_LEN=$((16 + RANDOM % 11))
+
+openssl rand -base64 32 | tr -dc 'A-Za-z0-9' | head -c "$RAND_LEN" | pbcopy && pbpaste && echo
