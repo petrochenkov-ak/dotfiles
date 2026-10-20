@@ -8,10 +8,9 @@
 
 XDG_CONFIG_HOME="${XDG_CONFIG_HOME-$HOME/.config}"
 
-
 shopt -s expand_aliases # enable aliases in scripts
 [ -f ~/.config/bash/aliases ] && { . ~/.config/bash/aliases || exit; }
-[ -f ~/.config/bash/env ] && { set -a; . ~/.config/bash/env || exit; set +a; }
+for f in ~/.config/env.d/*.env; do [ -r "$f" ] && set -a && source "$f" && set +a; done
 
 # https://direnv.net/
 # eval "$(direnv hook bash)"      # interactive

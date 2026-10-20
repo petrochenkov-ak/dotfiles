@@ -6,15 +6,14 @@ REPO_PATH="$PWD"
 SRC_DIR="$HOME/.local/share/repo-dotfiles"
 
 ( set -x; rm -fr "$REPO_PATH"/.github ) || exit 1
-( set -x; rsync -L --mkpath "$SRC_DIR"/github/workflows/tests.yaml "$REPO_PATH"/.github/workflows/ ) || exit 1
-if [ -e "$REPO_PATH/docker/compose/build.yaml" ]; then
-    ( set -x; rsync -L --mkpath "$SRC_DIR"/github/scripts/docker-compose-ghcr-build-push.sh "$REPO_PATH"/.github/scripts/ ) || exit 1
-    ( set -x; rsync -L --mkpath "$SRC_DIR"/github/workflows/docker-compose-ghcr-build-push.yaml "$REPO_PATH"/.github/workflows/ ) || exit 1
+if [ -e "$REPO_PATH/docker" ] || [ -e "$REPO_PATH/python" ]; then
+    ( set -x; gh-workflow-cp "main-ci.yaml" ) || exit 1
 fi
-
+if [ -e "$REPO_PATH/docker" ]; then
+    ( set -x; gh-workflow-cp "docker-compose-build-push.yaml" ) || exit 1
+fi
 if [ -e "$REPO_PATH/python" ]; then
-    ( set -x; rsync -L --mkpath "$SRC_DIR"/github/scripts/python-requirements-action.sh "$REPO_PATH"/.github/scripts/ ) || exit 1
-    ( set -x; rsync -L --mkpath "$SRC_DIR"/github/workflows/python-requirements-action.yaml "$REPO_PATH"/.github/workflows/ ) || exit 1
+    ( set -x; gh-workflow-cp "python-ci.yaml" ) || exit 1
 fi
 #if [ -e "$REPO_PATH/config/kamal.prod.yaml" ]; then
  #   ( set -x; rsync -L --mkpath "$SRC_DIR"/github/scripts/kamal-ghcr-prod-action.sh "$REPO_PATH"/.github/scripts/ ) || exit 1

@@ -1,0 +1,19 @@
+name: docker-compose-build-push.yaml
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: [self-hosted, linux]
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: actions/checkout@v6
+        uses: actions/checkout@v6
+
+      - name: petrochenkov-ak-lab/actions/actions/docker-compose-build-push@main
+        uses: petrochenkov-ak-lab/actions/actions/docker-compose-build-push@main

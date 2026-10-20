@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+full_name=$(gh-repo-full-name) || exit 1
+( set -x; gh api "users/$full_name" --jq '.type' )

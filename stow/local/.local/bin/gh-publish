@@ -6,6 +6,7 @@
 ( set -x; gh-repo-view-error ) | grep -q "Could not resolve to a Repository" && {
     ( set -x; rm -fr .git ) || exit 1
 }
+( set -x; repo-setup ) || exit 1
 ( set -x; git init -q ) || exit 1
 ( set -x; git-checkout-ai-branch ) || exit 1
 ( set -x; git add -A ) || exit 1

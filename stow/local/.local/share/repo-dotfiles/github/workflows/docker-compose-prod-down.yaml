@@ -11,8 +11,8 @@ jobs:
       packages: write
 
     steps:
-      - name: petrochenkov-ak-lab/docker-compose-prod-down-action@main
-        uses: petrochenkov-ak-lab/docker-compose-prod-down-action@main
+      - name: petrochenkov-ak-lab/actions/actions/docker-compose-prod-down@main
+        uses: petrochenkov-ak-lab/actions/actions/docker-compose-prod-down@main
         env:
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
           DEPLOY_SSH_HOST: ${{ secrets.DEPLOY_SSH_HOST }}

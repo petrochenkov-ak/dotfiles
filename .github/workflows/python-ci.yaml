@@ -1,0 +1,21 @@
+name: python-ci.yaml
+
+on:
+  workflow_dispatch:
+
+jobs:
+  python-ci:
+    runs-on: [self-hosted, linux]
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: actions/checkout@v4
+        uses: actions/checkout@v4
+
+      - name: docker pull
+        run: docker pull ghcr.io/petrochenkov-ak-lab/python-ci-action:3.14
+
+      - name: docker://ghcr.io/petrochenkov-ak-lab/python-ci-action
+        uses: docker://ghcr.io/petrochenkov-ak-lab/python-ci-action:3.14

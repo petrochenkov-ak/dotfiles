@@ -6,14 +6,8 @@
 # .bashrc is executed for interactive non-login shells
 # OS X Terminal.app runs a login shell by default for each new terminal window, calling .bash_profile instead of .bashrc
 
-[ -f ~/.config/bash/prompt ] && { . ~/.config/bash/prompt || exit; }
-[ -f ~/.bashrc ] && { . ~/.bashrc || exit; }
-
-[ -f ../../../.env ] && { . ../../../.env || exit; }
-[ -f ../../.env ] && { . ../../.env || exit; }
-[ -f ../.env ] && { . ../.env || exit; }
-[ -f .env ] && { . .env || exit; }
-:
+[ -e ~/.config/bash/prompt ] && { . ~/.config/bash/prompt || exit; }
+[ -e ~/.bashrc ] && { . ~/.bashrc || exit; }
 
 . "$HOME/.cargo/env"
 
