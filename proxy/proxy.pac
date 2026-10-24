@@ -1,5 +1,6 @@
 function FindProxyForURL(url, host) {
     if (
+        shExpMatch(host, "github.com") ||
         shExpMatch(host, "githubassets.com") ||
         shExpMatch(host, "*.githubassets.com") ||
         shExpMatch(host, "githubcopilot.com") ||

@@ -14,7 +14,7 @@ fi
 ( set -x; rsync -aL --delete --mkpath "$SRC_DIR/scripts/repo-setup.sh" "$REPO_PATH/.scripts/repo-setup.sh" ) || exit 1
 ( set -x; rsync -aL --delete --mkpath "$SRC_DIR/scripts/Terminal.sh" "$REPO_PATH/.scripts/Terminal.sh" ) || exit 1
 
-if [ -e "$REPO_PATH/docker/compose/build.yaml" ]; then
+if [ -e "$REPO_PATH/docker" ]; then
     ( set -x; rsync -aL --delete --mkpath "$SRC_DIR"/scripts/docker/. "$REPO_PATH"/.scripts/docker/ ) || exit 1
 fi
 if [ -e "$REPO_PATH/config/kamal.prod.yaml" ]; then

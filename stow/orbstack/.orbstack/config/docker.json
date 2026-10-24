@@ -1,0 +1,11 @@
+{
+  "experimental": true,
+  "insecure-registries": [
+    "localhost:5000"
+  ],
+  "registry-mirrors": [
+    "https://huecker.io",
+    "https://docker4u.ru",
+    "https://daocloud.io"
+  ]
+}

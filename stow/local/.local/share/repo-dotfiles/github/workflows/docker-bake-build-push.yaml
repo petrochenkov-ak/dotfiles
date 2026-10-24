@@ -1,0 +1,22 @@
+name: docker-bake-build-push.yaml
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: [self-hosted, linux]
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: actions/checkout@v6
+        uses: actions/checkout@v6
+
+      - name: docker pull
+        run: docker pull ghcr.io/petrochenkov-ak-lab/docker-bake-build-push:latest
+
+      - name: docker://ghcr.io/petrochenkov-ak-lab/docker-bake-build-push
+        uses: docker://ghcr.io/petrochenkov-ak-lab/docker-bake-build-push:latest

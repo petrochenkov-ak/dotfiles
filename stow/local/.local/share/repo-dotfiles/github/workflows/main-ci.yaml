@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'docker/compose/**'
+      - 'docker/docker-bake.hcl'
       - 'docker/images/**'
       - 'python/packages/**'
   workflow_dispatch:
@@ -13,11 +13,11 @@ jobs:
   pipeline:
     runs-on: [self-hosted, linux]
     steps:
-      - name: Checkout code
+      - name: actions/checkout
         uses: actions/checkout@v4
 
       - name: docker pull
-        run: docker pull registry.docker.internal:5000/main-ci-action:3.14
+        run: docker pull registry.docker.internal:5000/main-ci-action:latest
 
       - name: registry.docker.internal:5000/main-ci-action
-        uses: docker://registry.docker.internal:5000/main-ci-action:3.14
+        uses: docker://registry.docker.internal:5000/main-ci-action:latest

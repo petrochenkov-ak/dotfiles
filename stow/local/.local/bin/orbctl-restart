@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+( set -x; orbctl stop )
+( set -x; sleep 3 )
+( set -x; orbctl start )
