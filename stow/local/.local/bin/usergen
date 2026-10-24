@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+RAND_LEN=$((15 + RANDOM % 12))
+USERNAME="user_$(openssl rand -base64 32 | tr -dc 'a-z0-9' | head -c "$RAND_LEN")"
+
+if command -v pbcopy &>/dev/null; then
+    echo -n "$USERNAME" | pbcopy && pbpaste && echo
+elif command -v xclip &>/dev/null; then
+    echo -n "$USERNAME" | xclip -selection clipboard
+    echo "$USERNAME"
+else
+    echo "$USERNAME"
+fi

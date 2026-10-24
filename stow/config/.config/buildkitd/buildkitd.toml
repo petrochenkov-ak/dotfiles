@@ -1,0 +1,11 @@
+[registry."registry.docker.internal:5000"]
+  http = true
+  insecure = true
+  http-timeout = "10m"
+[registry."ghcr.io"]
+  mirrors = [
+    "ghcr.v6.army",
+    "ghcr.docker4u.ru",
+    "ghcr.timeweb.cloud",
+    "huecker.io"
+  ]

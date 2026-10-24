@@ -9,8 +9,8 @@ SRC_DIR="$HOME/.local/share/repo-dotfiles"
 if [ -e "$REPO_PATH/docker" ] || [ -e "$REPO_PATH/python" ]; then
     ( set -x; gh-workflow-cp "main-ci.yaml" ) || exit 1
 fi
-if [ -e "$REPO_PATH/docker" ]; then
-    ( set -x; gh-workflow-cp "docker-compose-build-push.yaml" ) || exit 1
+if [ -e "$REPO_PATH/docker/images" ]; then
+    ( set -x; gh-workflow-cp "docker-bake-build-push.yaml" ) || exit 1
 fi
 if [ -e "$REPO_PATH/python" ]; then
     ( set -x; gh-workflow-cp "python-ci.yaml" ) || exit 1
