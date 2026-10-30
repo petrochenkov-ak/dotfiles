@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+SRC=$HOME/git/petrochenkov-ak/dotfiles/repo-dotfiles/docker-scripts
+
+( set -x; find docker/images -mindepth 1 -maxdepth 1 -type d -exec rsync -a --delete --mkpath "$SRC/" {}/.scripts/ \; )

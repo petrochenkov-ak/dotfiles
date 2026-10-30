@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 1 ]] && echo "usage: ${0##*/} name" && exit 1
+
+BAKE_FILES=("-f" "docker/docker-bake.hcl")
+# BAKE_FILES+=("-f" "docker/images/$1/docker-bake.hcl")
+for f in docker/images/*/docker-bake.hcl; do
+  BAKE_FILES+=("-f" "$f")
+done
+
+( set -x; docker-buildx-init ) || exit 1
+( set -x; /opt/homebrew/bin/docker-buildx bake "${BAKE_FILES[@]}" --progress=plain "$@" )

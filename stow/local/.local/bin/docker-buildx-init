@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+export BUILDKIT_CONFIG=~/.config/buildkitd/buildkitd.toml
+
+# ( set -x; docker run --privileged --rm tonistiigi/binfmt --install all ) || exit 1
+if ! ( set -x; /opt/homebrew/bin/docker-buildx inspect my-local-builder ) &>/dev/null; then
+  ( set -x; /opt/homebrew/bin/docker-buildx create \
+    --name my-local-builder \
+    --driver docker-container \
+    --config "$BUILDKIT_CONFIG" \
+    --use ) || exit 1
+else
+  ( set -x; /opt/homebrew/bin/docker-buildx use my-local-builder ) || exit 1
+fi
+( set -x; docker buildx inspect --bootstrap )

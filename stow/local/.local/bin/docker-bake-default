@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+BAKE_FILES=("-f" "docker/docker-bake.hcl")
+for f in docker/images/*/docker-bake.hcl; do
+  BAKE_FILES+=("-f" "$f")
+done
+
+( set -x; docker-buildx-init ) || exit 1
+( set -x; /opt/homebrew/bin/docker-buildx bake "${BAKE_FILES[@]}" --progress=plain "$@" )

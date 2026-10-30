@@ -12,7 +12,7 @@ usage() {
 
 [[ $1 == "-h" ]] || [[ $1 == "--help" ]] && usage "$@"
 
-host="google.com"
+host="ya.ru"
 
 # exit codes:
 # 68    cannot resolve google.com: Unknown host
