@@ -16,8 +16,5 @@ jobs:
       - name: actions/checkout
         uses: actions/checkout@v4
 
-      - name: docker pull
-        run: docker pull registry.docker.internal:5000/main-ci-action:latest
-
       - name: registry.docker.internal:5000/main-ci-action
         uses: docker://registry.docker.internal:5000/main-ci-action:latest

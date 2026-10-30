@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+REPO_PATH="$PWD"
+SRC_DIR=~/git/petrochenkov-ak/dotfiles/repo-dotfiles
+
+if [ -d ".scripts" ]; then
+    ( set -x; find ".scripts" -type l -delete ) 2>/dev/null || exit 1
+fi
+
+# default
+( set -x; rsync -aL --delete --mkpath --chmod=+x "$SRC_DIR/scripts/git/." ".scripts/git/" ) || exit 1
+( set -x; rsync -aL --delete --mkpath --chmod=+x "$SRC_DIR/scripts/github/." ".scripts/github/" ) || exit 1
+( set -x; rsync -aL --delete --mkpath --chmod=+x "$SRC_DIR/scripts/repo-setup.sh" ".scripts/repo-setup.sh" ) || exit 1
+( set -x; rsync -aL --delete --mkpath --chmod=+x "$SRC_DIR/scripts/Terminal.sh" ".scripts/Terminal.sh" ) || exit 1
+
+if [ -e "docker" ]; then
+    ( set -x; rsync -aL --delete --mkpath --chmod=+x "$SRC_DIR"/scripts/docker/. .scripts/docker/ ) || exit 1
+fi
+if [ -e "config/kamal.prod.yaml" ]; then
+    ( set -x; rsync -aL --delete --mkpath --chmod=+x "$SRC_DIR"/scripts/kamal/. .scripts/kamal/ ) || exit 1
+fi
+# python/
+if [ -d "python" ]; then
+    ( set -x; rsync -aL --delete --mkpath --chmod=+x "$SRC_DIR"/scripts/python/. .scripts/python/ ) || exit 1
+    ( set -x; rsync -aL --delete --mkpath --chmod=+x "$SRC_DIR"/scripts/celery/. .scripts/celery/ ) || exit 1
+    ( set -x; rsync -aL --delete --mkpath --chmod=+x "$SRC_DIR"/scripts/django/. .scripts/django/ ) || exit 1
+fi
+# sql/
+if [ -d "sql" ]; then
+    ( set -x; rsync -aL --delete --mkpath --chmod=+x "$SRC_DIR/scripts/postgres/." .scripts/postgres/ ) || exit 1
+fi

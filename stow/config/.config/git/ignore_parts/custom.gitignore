@@ -11,6 +11,7 @@
 /.readme-generator
 /setup-twine.py
 /assets/webpack_bundles
+/docker/images/*/docker-bake.command
 /Brewfile.lock.json
 /static
 webpack-stats.json

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://apple.com">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.singbox.macos</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/homebrew/bin/sing-box</string>
+        <string>run</string>
+        <string>-c</string>
+        <string>/Users/anndrewp-as-is/config.json</string>
+    </array>
+    <key>KeepAlive</key>
+    <true/>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/tmp/singbox.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/singbox.err</string>
+</dict>
+</plist>

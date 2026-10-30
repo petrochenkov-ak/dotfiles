@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
 { set +x; } 2>/dev/null
 
-( set -x; repo-setup-dotfiles-github && repo-setup-dotfiles-scripts )
+( set -x; repo-setup-github-workflows ) || exit 1
+( set -x; repo-setup-root-scripts ) || exit 1
+[ -e docker ] && {
+    ( set -x; repo-setup-docker-scripts ) || exit 1
+}
+( set -x; find . -type f -name "*.command" ! -perm -111 -exec sh -c 'set -x; chmod +x "$1"' _ {} \; )
