@@ -1,0 +1,119 @@
+{
+  "log": {
+    "level": "info",
+    "timestamp": true
+  },
+  "dns": {
+    "servers": [
+      {
+        "type": "udp",
+        "tag": "dns_proxy",
+        "server": "8.8.8.8",
+        "detour": "proxy"
+      },
+      {
+        "type": "udp",
+        "tag": "dns_direct",
+        "server": "1.1.1.1"
+      }
+    ],
+    "rules": [
+      {
+        "rule_set": ["geosite-youtube", "geosite-google"],
+        "server": "dns_proxy"
+      },
+      {
+        "domain_suffix": [
+          "googlevideo.com",
+          "youtube.com",
+          "ytimg.com",
+          "ggpht.com",
+          "youtu.be",
+          "nhacmp3cdn.com"
+        ],
+        "server": "dns_proxy"
+      }
+    ],
+    "final": "dns_direct"
+  },
+  "inbounds": [
+    {
+      "type": "mixed",
+      "tag": "mixed-in",
+      "listen": "127.0.0.1",
+      "listen_port": 2080
+    }
+  ],
+  "outbounds": [
+    {
+      "type": "vless",
+      "tag": "proxy",
+      "server": "SERVER_ADDRESS",
+      "server_port": SERVER_PORT,
+      "uuid": "UUID",
+      "flow": "FLOW",
+      "tls": {
+        "enabled": true,
+        "server_name": "SNI",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": REALITY_ENABLED,
+          "public_key": "PUBLIC_KEY",
+          "short_id": "SHORT_ID"
+        }
+      },
+      "transport": TRANSPORT_BLOCK
+    },
+    {
+      "type": "direct",
+      "tag": "direct"
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "action": "sniff"
+      },
+      {
+        "rule_set": ["geosite-youtube", "geosite-google"],
+        "domain_suffix": [
+          "googlevideo.com",
+          "youtube.com",
+          "ytimg.com",
+          "ggpht.com",
+          "youtu.be",
+          "nhacmp3cdn.com"
+        ],
+        "outbound": "proxy"
+      }
+    ],
+    "rule_set": [
+      {
+        "tag": "geosite-youtube",
+        "type": "local",
+        "format": "binary",
+        "path": "GEOSITE_YOUTUBE_PATH"
+      },
+      {
+        "tag": "geosite-google",
+        "type": "local",
+        "format": "binary",
+        "path": "GEOSITE_GOOGLE_PATH"
+      }
+    ],
+    "final": "direct",
+    "auto_detect_interface": true,
+    "default_domain_resolver": {
+      "server": "dns_direct"
+    }
+  },
+  "experimental": {
+    "cache_file": {
+      "enabled": true,
+      "path": "CACHE_FILE_PATH"
+    }
+  }
+}

@@ -13,6 +13,9 @@ echo "$services" | while read -r service; do
         dl-cdn.alpinelinux.org \
         *.docker.com \
         *.docker.internal \
+        github.com \
+        gitlab.com \
+        google.com \
         *registry* \
         ru \
         local \

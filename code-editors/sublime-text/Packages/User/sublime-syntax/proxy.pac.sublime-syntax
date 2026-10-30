@@ -3,7 +3,7 @@
 name: Proxy Auto-Config (PAC)
 file_extensions:
   - pac
-scope: source.js
+scope: source.js.pac
 contexts:
   main:
-    - include: scope:source.js
+    - include: Packages/JavaScript/JavaScript.sublime-syntax
