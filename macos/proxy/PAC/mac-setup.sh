@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-url="https://raw.githubusercontent.com/petrochenkov-ak/dotfiles/refs/heads/main/proxy/proxy.pac"
+url="https://raw.githubusercontent.com/petrochenkov-ak/dotfiles/refs/heads/main/proxy/PAC/proxy.pac"
 
 ( set -x; networksetup -listallnetworkservices )
 ( set -x; sudo networksetup -setautoproxyurl "Wi-Fi" "$url" )
