@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+if [ -z "$DOCKER_REGISTRY_ADDR" ]; then
+    echo "ERROR: DOCKER_REGISTRY_ADDR is not set" >&2
+    exit 1
+fi
+
+if ! ( set -x; curl -kIs --connect-timeout 4 "https://$DOCKER_REGISTRY_ADDR/v2/" ) > /dev/null; then
+    echo "ERROR: Registry $DOCKER_REGISTRY_ADDR is dead or blocked" >&2
+    exit 1
+fi;:

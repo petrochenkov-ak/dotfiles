@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 1 ]] && echo "usage: ${0##*/} name" && exit 1
+
+NAME="$1"
+
+[[ "$NAME" == "gha-runner" ]] && echo "SKIP: gha-runner" && exit 0
+
+tags=$(set -x; crane ls "$DOCKER_REGISTRY_ADDR/$NAME") || exit 1
+echo "$tags" | while read -r tag; do
+  [ -z "$tag" ] && continue
+  image="$DOCKER_REGISTRY_ADDR/$NAME:$tag"
+  ( set -x; docker pull "$image" ) || exit 1
+done

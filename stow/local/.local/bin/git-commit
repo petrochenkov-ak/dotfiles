@@ -17,4 +17,4 @@ if [ "$current_branch" = "main" ]; then
 fi
 
 commit_msg="$(set -x; git-commit-msg-gen)" || exit 1
-( set -x; git commit -m "$commit_msg" ) || exit 1
+( set -x; git commit -q -m "$commit_msg" ) || exit 1

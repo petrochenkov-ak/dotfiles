@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 { set +x; } 2>/dev/null
 
+( set -x; find . -depth -type d -name ".scripts" -mindepth 2 -exec rm -fr {} + ) || exit 1
 ( set -x; repo-setup-github-workflows ) || exit 1
 ( set -x; repo-setup-root-scripts ) || exit 1
 [ -e docker ] && {
     ( set -x; repo-setup-docker-scripts ) || exit 1
 }
-( set -x; find . -type f -name "*.command" ! -perm -111 -exec sh -c 'set -x; chmod +x "$1"' _ {} \; )
+[ -e servers ] && {
+    ( set -x; repo-setup-servers-scripts ) || exit 1
+}
+( set -x; find . -type f -name "*.command" ! -perm -111 -exec sh -c 'set -x; chmod +x "$1"' _ {} \; ) || exit 1
+# ( set -x; find . -name Makefile -execdir make all \; ) || exit 1

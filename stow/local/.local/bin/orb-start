@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+ORB_CONFIG_DATA_DIR="$(orb config get data_dir)" || exit 1
+ORBSTACK_DOCKER_HOST="unix://${HOME}/.orbstack/run/docker.sock"
+DOCKER_CONTEXT=$(docker context show) || exit 1
+CONTEXT_DOCKER_HOST=$(docker context inspect orbstack --format '{{.Endpoints.docker.Host}}') || exit 1
+
+if [ ! -d "${ORBSTACK_DATA_DIR}" ]; then
+    ( set -x; mkdir -p "${ORBSTACK_DATA_DIR}" ) || exit 1
+fi
+if [ "$ORB_CONFIG_DATA_DIR" != "${ORBSTACK_DATA_DIR}" ]; then
+    ( set -x; orb data move "${ORBSTACK_DATA_DIR}" || true ) || exit 1
+fi
+if [ "$CONTEXT_DOCKER_HOST" != "$ORBSTACK_DOCKER_HOST" ]; then
+    ( set -x; docker context rm -f orbstack 2>/dev/null || true ) || exit 1
+    ( set -x; docker context create orbstack --docker "host=$ORBSTACK_DOCKER_HOST" ) || exit 1
+fi
+
+if [ "$DOCKER_CONTEXT" != "orbstack" ]; then
+    ( set -x; docker context use orbstack ) || exit 1
+fi
+
+if ! orb status 2>/dev/null | grep -qi "running"; then
+    ( set -x; orb start ) || exit 1
+fi;:

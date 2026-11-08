@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+{ set -x; cd "${BASH_SOURCE%/*/*/*/*}"; { set +x; } 2>/dev/null; }
+
+. ~/.bashrc || exit 1
+export NO_PROXY="localhost,127.0.0.1,registry.docker.internal"
+
+( set -x; orb-start ) || exit 1
+( set -x; docker-registry-check ) || exit 1
+( set -x; time docker-bake-default ) || exit 1
+( set -x; find docker/images -mindepth 1 -maxdepth 1 -type d ! -name ".*" -exec bash -c '
+    for d; do
+        ( set -x; docker-pull-all "${d##*/}" ) || exit 1
+    done
+' _ {} + ) || exit 1
+
+
