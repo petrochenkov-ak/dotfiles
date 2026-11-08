@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+( set -x; osascript -e "set volume with output muted" )
+( set -x; pmset displaysleepnow )

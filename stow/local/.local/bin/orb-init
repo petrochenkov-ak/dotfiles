@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+( set -x; orb shutdown ) || exit 1
+( set -x; mkdir -p "${ORBSTACK_DATA_DIR}" ) || exit 1
+( set -x; orb data move "${ORBSTACK_DATA_DIR}" || true ) || exit 1
+( set -x; docker context rm -f orbstack 2>/dev/null || true ) || exit 1
+( set -x; docker context create orbstack --docker "host=unix://${HOME}/.orbstack/run/docker.sock" ) || exit 1
+( set -x; docker context use orbstack ) || exit 1
+( set -x; orb start ) || exit 1

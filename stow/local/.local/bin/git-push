@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 { set +x; } 2>/dev/null
 
-( set -x; gh-ssh-test ) || exit 1
+( set -x; gh-ssh-check ) || exit 1
 ( set -x; git-guard-push ) || exit 1
 
 ( set -x; git-push-init ) || exit 1

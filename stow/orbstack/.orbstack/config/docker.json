@@ -6,6 +6,9 @@
   "registry-mirrors": [
     "https://huecker.io",
     "https://docker4u.ru",
-    "https://daocloud.io"
+    "https://daocloud.io",
+    "https://timeweb.cloud",
+    "https://mirror.gcr.io",
+    "https://dockermirror.com"
   ]
 }

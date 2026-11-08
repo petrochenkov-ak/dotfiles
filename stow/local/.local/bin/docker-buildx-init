@@ -12,4 +12,4 @@ if ! ( set -x; /opt/homebrew/bin/docker-buildx inspect my-local-builder ) &>/dev
 else
   ( set -x; /opt/homebrew/bin/docker-buildx use my-local-builder ) || exit 1
 fi
-( set -x; docker buildx inspect --bootstrap )
+( set -x; docker buildx inspect --bootstrap ) || exit 1
