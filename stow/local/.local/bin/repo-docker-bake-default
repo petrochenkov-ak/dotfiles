@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 { set +x; } 2>/dev/null
 
+. ~/.bashrc || exit 1
+export NO_PROXY="localhost,127.0.0.1,registry.docker.internal"
+
 BAKE_FILES=("-f" "docker/docker-bake.hcl")
 for f in docker/images/*/docker-bake.hcl; do
   BAKE_FILES+=("-f" "$f")

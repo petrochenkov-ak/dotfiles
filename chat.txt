@@ -1,7 +1,19 @@
-как корректнее
+команды
+bin/git-all-repos-exec
+bin/git-owner-repos-exec
 
-1) git-push-guard
-2) git-push-guard
-3) другое
+xxx.command готовые скрипты для них нужно хранить в dotfiles
 
-оцени по шкале 1..100
+где корректнее
+1)
+dotfiles/git-all-repos-exec
+dotfiles/git-owners-repos-exec
+2)
+dotfiles/git-repos-exec/git-all-repos-exec
+dotfiles/git-repos-exec/git-owners-repos-exec
+3)
+dotfiles/git-exec/git-all-repos-exec
+dotfiles/git-exec/git-owners-repos-exec
+4) другое
+
+оцени таблицей кратко по шкале 1..100

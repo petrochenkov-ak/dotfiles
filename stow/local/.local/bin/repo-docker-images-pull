@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+! [ -e docker/images ] && echo "SKIP: $PWD/docker/images not exists" && exit 0
+
+( set -x; find docker/images -mindepth 1 -maxdepth 1 -type d ! -name ".*" -exec bash -c '
+    for d; do
+        ( set -x; docker-pull-all-tags "${d##*/}" ) || exit 1
+    done
+' _ {} + ) || exit 1

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+DOCKER_DIR=$HOME/git/petrochenkov-ak/dotfiles/repo-dotfiles/docker
+ROOT_SCRIPTS_SRC_DIR="${DOCKER_DIR}/root/scripts"
+IMAGE_SCRIPTS_SRC_DIR="${DOCKER_DIR}/image/scripts"
+COMPOSE_PROJECT_LOCAL_SCRIPTS_SRC_DIR="${DOCKER_DIR}/compose/local/scripts"
+COMPOSE_PROJECT_SSH_SCRIPTS_SRC_DIR="${DOCKER_DIR}/compose/ssh/scripts"
+
+# ( set -x; rsync -a --delete --mkpath "${ROOT_SCRIPTS_SRC_DIR}/" docker/.scripts/ ) || exit 1
+
+( set -x; find docker/images -mindepth 1 -maxdepth 1 ! -name ".scripts" -type d -exec rsync -a --delete --mkpath "${IMAGE_SCRIPTS_SRC_DIR}/" {}/.scripts/ \; ) || exit 1

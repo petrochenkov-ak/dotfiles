@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+if [ $# -lt 2 ]; then
+  echo "Usage: $(basename "$0") <owner> <cmd> [args...]"
+  exit 1
+fi
+
+OWNER="$1"
+CMD="$2"
+OWNER_DIR="${HOME}/git/${OWNER}"
+shift 2
+
+shopt -s nullglob
+for dir in "$OWNER_DIR"/*/; do
+  echo dir=$dir
+  [ -d "$dir" ] && [ ! -L "$dir" ] || continue
+  (
+    set -x;
+    cd "$dir" || exit 1
+    "$CMD" "$@"
+    exit 1
+  )
+done
