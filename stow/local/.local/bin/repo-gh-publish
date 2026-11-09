@@ -10,10 +10,10 @@
 ( set -x; git init -q ) || exit 1
 ( set -x; git-checkout-ai-branch ) || exit 1
 ( set -x; git add -A ) || exit 1
-( set -x; git-commit ) || exit 1
-( set -x; gh-repo-create ) || exit 1
-( set -x; git-fetch-rebase-main ) || exit 1
-( set -x; gh-set-secrets ) || exit 1
-( set -x; git-push ) || exit 1
-( set -x; gh-pr-sync ) || exit 1
-( set -x; gh-pr-cleanup ) || exit 1
+( set -x; repo-git-commit ) || exit 1
+( set -x; repo-gh-create ) || exit 1
+( set -x; repo-git-fetch-rebase-main ) || exit 1
+( set -x; repo-gh-set-secrets ) || exit 1
+( set -x; repo-git-push ) || exit 1
+( set -x; repo-gh-pr-sync ) || exit 1
+( set -x; repo-gh-pr-cleanup ) || exit 1

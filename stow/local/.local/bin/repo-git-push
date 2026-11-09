@@ -2,9 +2,9 @@
 { set +x; } 2>/dev/null
 
 ( set -x; gh-ssh-check ) || exit 1
-( set -x; git-push-guard ) || exit 1
+( set -x; repo-git-push-guard ) || exit 1
 
-( set -x; git-push-init ) || exit 1
-( set -x; git-push-feature ) || exit 1
+( set -x; repo-git-push-init ) || exit 1
+( set -x; repo-git-push-feature ) || exit 1
 
 ( set -x; git fetch origin main -q ) || exit 1

@@ -3,4 +3,4 @@
 
 { set -x; cd "${BASH_SOURCE[0]%/*/*/*}" || exit; { set +x; } 2>/dev/null; }
 
-( set -x; gh-actions-open )
+( set -x; repo-gh-actions-open )
