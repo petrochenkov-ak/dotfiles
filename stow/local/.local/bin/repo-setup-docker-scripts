@@ -1,26 +1,10 @@
 #!/usr/bin/env bash
 { set +x; } 2>/dev/null
 
-DOCKER_DIR=$HOME/git/petrochenkov-ak/dotfiles/repo-dotfiles/docker
-ROOT_SCRIPTS_SRC_DIR="${DOCKER_DIR}/root/scripts"
-IMAGE_SCRIPTS_SRC_DIR="${DOCKER_DIR}/image/scripts"
-COMPOSE_LOCAL_SCRIPTS_SRC_DIR="${DOCKER_DIR}/compose/local/scripts"
-COMPOSE_SSH_SCRIPTS_SRC_DIR="${DOCKER_DIR}/compose/ssh/scripts"
-
-( set -x; rsync -a --delete --mkpath "${ROOT_SCRIPTS_SRC_DIR}/" docker/.scripts/ ) || exit 1
-[ -e docker/images ] && {
-    ( set -x; find docker/images -mindepth 1 -maxdepth 1 ! -name ".scripts" -type d -exec rsync -a --delete --mkpath "${IMAGE_SCRIPTS_SRC_DIR}/" {}/.scripts/ \; )
-}
-# todo: docker/local
 [ -e docker/compose ] && {
-   # ( set -x; find docker/compose -mindepth 1 -maxdepth 1 -type d -exec rsync -a --delete --mkpath "$SRC_DIR/compose-src/" {}/.scripts/ \; ) || exit 1
-    # find docker/compose/{project}/{env}/docker-compose.yaml
-    ( set -x; find docker/compose -mindepth 2 -maxdepth 2 -name "local" -type d -exec rsync -a --delete --mkpath "${COMPOSE_LOCAL_SCRIPTS_SRC_DIR}/" {}/.scripts/ \; ) || exit 1
-    ( set -x; find docker/compose -mindepth 2 -maxdepth 2 ! -name "local" -type d -exec rsync -a --delete --mkpath "${COMPOSE_SSH_SCRIPTS_SRC_DIR}/" {}/.scripts/ \; ) || exit 1
+    ( set -x; repo-setup-docker-compose-scripts ) || exit 1
+}
+[ -e docker/images ] && {
+    ( set -x; repo-setup-docker-images-scripts ) || exit 1
 };:
-
-#[ -e docker/kamal ] && {
-#    # find docker/kamal/{project}/{env}/kamal.yaml
-#    ( set -x; find docker/kamal -mindepth 2 -maxdepth 2 -type d -exec rsync -a --delete --mkpath "${KAMAL_SCRIPTS_SRC_DIR}/" {}/.scripts/ \; )
-#};:
 

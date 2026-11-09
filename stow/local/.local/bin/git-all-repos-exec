@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+if [ $# -lt 1 ]; then
+  echo "Usage: $(basename "$0") <cmd> [args...]"
+  exit 1
+fi
+
+CMD="$1"
+BASE_DIR="${HOME}/git"
+shift 1
+
+shopt -s nullglob
+for dir in "$BASE_DIR"/*/*/; do
+  [ -d "$dir" ] && [ ! -L "${dir%/}" ] || continue
+  (
+    set -x
+    cd "$dir" || exit 1
+    "$CMD" "$@"
+  )
+done

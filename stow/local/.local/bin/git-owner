@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+if [ $# -lt 1 ]; then
+  echo "Usage: $(basename "$0") path"
+  exit 1
+fi
+
+basename "$(cd "$(dirname "$1")/.." && pwd -L)"
