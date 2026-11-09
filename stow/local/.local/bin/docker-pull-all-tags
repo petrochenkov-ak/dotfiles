@@ -5,7 +5,7 @@
 
 NAME="$1"
 
-[[ "$NAME" == "gha-runner" ]] && echo "SKIP: gha-runner" && exit 0
+[[ "$NAME" == "gha-runner" ]] && echo "SKIP: gha-runner (prod only)" && exit 0
 
 tags=$(set -x; crane ls "$DOCKER_REGISTRY_ADDR/$NAME") || exit 1
 echo "$tags" | while read -r tag; do

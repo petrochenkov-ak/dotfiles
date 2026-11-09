@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 { set +x; } 2>/dev/null
 
-full_name=$(gh-repo-full-name) || exit 1
+full_name=$(repo-gh-full-name) || exit 1
 
 ( set -x; gh api -X PATCH "/repos/${full_name}" -f allow_auto_merge=true )

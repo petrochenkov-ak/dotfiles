@@ -4,8 +4,7 @@
 /.config
 /.github-metadata
 /.pypi-metadata
-/.scripts
-/_scripts
+.scripts
 /.pypi
 /.python
 /.readme-generator
