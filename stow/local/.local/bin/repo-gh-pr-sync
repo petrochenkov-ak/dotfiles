@@ -10,7 +10,7 @@ REMOTE_COMMITS=$(git ls-remote --heads origin 2>/dev/null) || exit 1
 
 ( set -x; retry -u success -- gh repo edit "$REPO_NAME" --delete-branch-on-merge=true ) || exit 1
 
-PR_NUMBER=$(set -x; retry -u success -- gh pr list --head "$CURRENT_BRANCH" --bases
+PR_NUMBER=$(set -x; retry -u success -- gh pr list --head "$CURRENT_BRANCH" --base main --json number --jq '..number') || exit 1
 if [[ -z "$PR_NUMBER" || "$PR_NUMBER" == "null" ]]; then
     PR_URL=$(set -x; retry -u success -- gh pr create --base main --fill) || exit 1
     PR_NUMBER=${PR_URL##*/}
