@@ -3,7 +3,10 @@
   gckeepstorage = 50000 # 50 GB
 
 [worker.oci]
-  max-parallelism = 2
+  max-parallelism = 1
+
+[registry]
+  max-parallel-pull = 1
 
 [registry."registry.docker.internal:5000"]
   http = true

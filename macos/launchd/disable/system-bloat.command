@@ -1,0 +1,355 @@
+#!/usr/bin/env bash
+
+if [ "$EUID" -eq 0 ]; then
+  exit 1
+fi
+
+uid=$(id -u)
+
+sudo -v
+while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+
+( set -x; defaults write com.apple.notificationcenterui widgets-enabled -bool false ) || true
+
+for agent in \
+  com.apple.accessibility.heard \
+  com.apple.accessibility.mediaaccessibilityd \
+  com.apple.AccessibilityUIServer \
+  com.apple.accessoryaccess.uiagent \
+  com.apple.accessorysensormgrd \
+  com.apple.AddressBook.abd \
+  com.apple.AddressBook.SourceSync \
+  com.apple.adprivacyd \
+  com.apple.AirPlayUIAgent \
+  com.apple.AMPArtworkAgent \
+  com.apple.AMPDeviceDiscoveryAgent \
+  com.apple.AMPDevicesAgent \
+  com.apple.AMPSystemPlayerAgent \
+  com.apple.amsaccountsd \
+  com.apple.amsengagementd \
+  com.apple.amsondevicestoraged \
+  com.apple.analyticsagent \
+  com.apple.apfsuseragent \
+  com.apple.appplaceholdersyncd \
+  com.apple.appstoreagent \
+  com.apple.appstorecomponentsd \
+  com.apple.askpermissiond \
+  com.apple.assessmentagent \
+  com.apple.AssetCacheLocatorService \
+  com.apple.avconferenced \
+  com.apple.backgroundassets.user \
+  com.apple.betaenrollmentagent \
+  com.apple.bird \
+  com.apple.bookdatastored \
+  com.apple.businessservicesd \
+  com.apple.calaccessd \
+  com.apple.calendar.CalendarAgentBookmarkMigrationService \
+  com.apple.CalendarAgent \
+  com.apple.CalendarIntentsExtension \
+  com.apple.CampoRemoteService \
+  com.apple.CategoriesService \
+  com.apple.cdpd \
+  com.apple.chronod \
+  com.apple.ciphermld \
+  com.apple.ckdiscretionaryd \
+  com.apple.cksharingmanagementd \
+  com.apple.ClockAngel \
+  com.apple.cloudd \
+  com.apple.cloudphotod \
+  com.apple.CloudPhotosConfiguration \
+  com.apple.cloudsettingssyncagent \
+  com.apple.cloudtelemetryd \
+  com.apple.CMFSyncAgent \
+  com.apple.CommCenter-osx \
+  com.apple.commerce \
+  com.apple.communicationtrustd \
+  com.apple.companiond \
+  com.apple.contacts.donation-agent \
+  com.apple.contactsd \
+  com.apple.ContainerMigrationService \
+  com.apple.ContinuityCaptureAgent \
+  com.apple.coreidvd \
+  com.apple.CoreLocationAgent \
+  com.apple.CoreRoutine.helperservice \
+  com.apple.CoreThreadCommissionerServiced \
+  com.apple.dataaccess.dataaccessd \
+  com.apple.DeviceConfigurationAgent \
+  com.apple.diagnosticextensionsd \
+  com.apple.DictionaryServiceHelper \
+  com.apple.diskspaced \
+  com.apple.donotdisturbd \
+  com.apple.dprivacyd \
+  com.apple.dt.AutomationModeUI \
+  com.apple.dt.previewsd \
+  com.apple.dt.previewsviewservice \
+  com.apple.ecosystemagent \
+  com.apple.email.maild \
+  com.apple.ensemble \
+  com.apple.EscrowSecurityAlert \
+  com.apple.exchange.exchangesyncd \
+  com.apple.familycircled \
+  com.apple.FamilyControlsAgent \
+  com.apple.feedbackd \
+  com.apple.financed \
+  com.apple.findmy.findmylocateagent \
+  com.apple.findmydevice-user-agent \
+  com.apple.findmylocateagent \
+  com.apple.findmymacmessenger \
+  com.apple.followupd \
+  com.apple.FollowUpUI \
+  com.apple.frauddefensed \
+  com.apple.gamecontroller.ConfigService \
+  com.apple.gamecontroller.gamecontrolleragentd \
+  com.apple.GameController.gamecontrolleragentd \
+  com.apple.gamed \
+  com.apple.GameOverlayUI \
+  com.apple.GamePolicyAgent \
+  com.apple.GenerativeFunctions.agentstored \
+  com.apple.geoanalyticsd \
+  com.apple.geod \
+  com.apple.geodMachServiceBridge \
+  com.apple.gputoolsserviced \
+  com.apple.guidedbrowsingd \
+  com.apple.helpd \
+  com.apple.homeenergyd \
+  com.apple.homeeventsd \
+  com.apple.homed \
+  com.apple.HomeWidgetIntentsExtension \
+  com.apple.icloud.findmydeviced.findmydevice-user-agent \
+  com.apple.iCloudHelper \
+  com.apple.icloudmailagent \
+  com.apple.iCloudNotificationAgent \
+  com.apple.iCloudUserNotificationsd \
+  com.apple.idsfoundation.IDSRemoteURLConnectionAgent \
+  com.apple.imageplaygroundd \
+  com.apple.imagent \
+  com.apple.imautomatichistorydeletionagent \
+  com.apple.imcore.imtransferagent \
+  com.apple.imdpersistence.IMDPersistenceAgent \
+  com.apple.IMDPersistenceAgent \
+  com.apple.imklaunchagent \
+  com.apple.inputanalyticsd \
+  com.apple.installandsetup.migrationhelper.user \
+  com.apple.installd.user \
+  com.apple.itunescloudd \
+  com.apple.jetpackassetd \
+  com.apple.KeyboardAccessAgent \
+  com.apple.keyboardservicesd \
+  com.apple.keychainsharingmessagingd \
+  com.apple.KonaSynthesizer \
+  com.apple.linkd \
+  com.apple.liveactivitiesd \
+  com.apple.locationaccessstored \
+  com.apple.lockdownmoded \
+  com.apple.lockoutagent \
+  com.apple.loginwindow.LWWeeklyMessageTracer \
+  com.apple.MacinTalkAUSP \
+  com.apple.managedappdistributionagent \
+  com.apple.ManagedClientAgent.agent \
+  com.apple.ManagedSettingsAgent \
+  com.apple.Maps.mapspushd \
+  com.apple.Maps.mapssyncd \
+  com.apple.MauiAUSP \
+  com.apple.mdmclient.agent \
+  com.apple.mdworker.application \
+  com.apple.mdworker.shared \
+  com.apple.mdworker.single.arm64 \
+  com.apple.mdworker.single.x86_64 \
+  com.apple.mdworker.sizing \
+  com.apple.mediaremoted \
+  com.apple.menuextra.battery.helper \
+  com.apple.MessagesActionExtension \
+  com.apple.metadata.mdbulkimport \
+  com.apple.metadata.mdflagwriter \
+  com.apple.metadata.mdwrite \
+  com.apple.metrickitd \
+  com.apple.midiserver \
+  com.apple.milod \
+  com.apple.mobiledeviceupdater \
+  com.apple.mobilerepaird \
+  com.apple.mobiletimerd \
+  com.apple.naturallanguaged \
+  com.apple.navd \
+  com.apple.ndoagent \
+  com.apple.nearbyd \
+  com.apple.newsd \
+  com.apple.Notes.datastore \
+  com.apple.osanalyticshelper \
+  com.apple.parentalcontrols.check \
+  com.apple.passd \
+  com.apple.PasswordBreachAgent \
+  com.apple.photolibraryd \
+  com.apple.postersyncd \
+  com.apple.powerchime \
+  com.apple.previewshellapp \
+  com.apple.proactived \
+  com.apple.progressd \
+  com.apple.promotedcontentd \
+  com.apple.protectedcloudstorage.protectedcloudkeysyncing \
+  com.apple.ProtectedCloudKeySyncing \
+  com.apple.ptpcamerad \
+  com.apple.rapportd \
+  com.apple.RapportUIAgent \
+  com.apple.recentsd \
+  com.apple.remindd \
+  com.apple.RemoteDesktop.agent \
+  com.apple.RemoteManagementAgent \
+  com.apple.remotepairingd \
+  com.apple.remotespatialpreviewd \
+  com.apple.replicatord \
+  com.apple.ReportCrash \
+  com.apple.routined \
+  com.apple.Safari.History \
+  com.apple.SafariBookmarksSyncAgent \
+  com.apple.safaridavclient \
+  com.apple.SafariHistoryServiceAgent \
+  com.apple.SafariLaunchAgent \
+  com.apple.SafariNotificationAgent \
+  com.apple.ScreenReaderUIServer \
+  com.apple.screensharing.MessagesAgent \
+  com.apple.ScreenTimeAgent \
+  com.apple.ScreenTimeSettingsAgent \
+  com.apple.scrod \
+  com.apple.searchpartyuseragent \
+  com.apple.security.keychain-circle-notification \
+  com.apple.securityuploadd \
+  com.apple.sensingpredictd \
+  com.apple.seserviced \
+  com.apple.sharing.airdropui \
+  com.apple.sharingd \
+  com.apple.shazamd \
+  com.apple.shazameventsd \
+  com.apple.sidecar-display-agent \
+  com.apple.sidecar-relay \
+  com.apple.Siri \
+  com.apple.siriappintentsd \
+  com.apple.SiriAUSP \
+  com.apple.sociallayerd \
+  com.apple.SoftwareUpdateNotificationManager \
+  com.apple.speech.speechsynthesisd.arm64 \
+  com.apple.SpeechRecognitionCore.brokerd \
+  com.apple.spindump_agent \
+  com.apple.sportsd \
+  com.apple.spotlightknowledged \
+  com.apple.spotlightknowledged.importer \
+  com.apple.spotlightknowledged.updater \
+  com.apple.StatusKitAgent \
+  com.apple.stickersd \
+  com.apple.StocksKitService \
+  com.apple.storeassetd \
+  com.apple.storelegacy \
+  com.apple.studentd \
+  com.apple.swtransparencyd \
+  com.apple.symptomsd.distributed-agent \
+  com.apple.syncdefaultsd \
+  com.apple.syncservices.SyncServer \
+  com.apple.telephonyutilities.callservicesd \
+  com.apple.testmanagerd \
+  com.apple.textcomposerd \
+  com.apple.textcontextd \
+  com.apple.tipsd \
+  com.apple.TMHelperAgent \
+  com.apple.transparency \
+  com.apple.transparencyStaticKey \
+  com.apple.universalaccessd \
+  com.apple.UsageTrackingAgent \
+  com.apple.useractivityd \
+  com.apple.videoconference.camera \
+  com.apple.videosubscriptionsd \
+  com.apple.voicememod \
+  com.apple.WallpaperAerialsExtension \
+  com.apple.WallpaperImageExtension \
+  com.apple.WardaSynthesizer \
+  com.apple.watchlistd \
+  com.apple.weatherd \
+  com.apple.webprivacyd \
+  com.apple.WiFiCloudAssetsXPCService \
+  com.apple.WorkflowKit.ShortcutsViewService \
+  com.google.android.mtpagent \
+  com.google.GoogleUpdater.wake; do
+  for domain in "gui/${uid}" "user/${uid}"; do
+    if launchctl print "${domain}/${agent}" >/dev/null 2>&1; then
+      ( set -x; launchctl bootout "${domain}/${agent}" ) || true
+    fi
+    ( set -x; launchctl disable "${domain}/${agent}" ) || true
+  done
+done
+
+for daemon in \
+  com.apple.AirPlayXPCHelper \
+  com.apple.analyticsd \
+  com.apple.appleh13camerad \
+  com.apple.appleseed.fbahelperd \
+  com.apple.AssetCache.builtin \
+  com.apple.AssetCacheManagerService \
+  com.apple.AssetCacheSubscriber \
+  com.apple.AssetCacheTetheratorService \
+  com.apple.audioanalyticsd \
+  com.apple.avconferenced \
+  com.apple.awdd \
+  com.apple.backupd \
+  com.apple.backupd-helper \
+  com.apple.betaenrollmentd \
+  com.apple.bootcampd \
+  com.apple.cloudtelemetryd \
+  com.apple.CommCenter \
+  com.apple.CoreLocationAgent \
+  com.apple.diagnosticd \
+  com.apple.diagnosticservicesd \
+  com.apple.ecosystemanalyticsd \
+  com.apple.familycontrols \
+  com.apple.feedbackd \
+  com.apple.findmybeaconingd \
+  com.apple.findmydeviced \
+  com.apple.findmymacd \
+  com.apple.gamed \
+  com.apple.GameController.gamecontrollerd \
+  com.apple.gamepolicyd \
+  com.apple.geod \
+  com.apple.homeenergyd \
+  com.apple.homed \
+  com.apple.installandsetup.systemmigrationd \
+  com.apple.locationd \
+  com.apple.managedappdistributiond \
+  com.apple.ManagedClient \
+  com.apple.ManagedClient.cloudconfigurationd \
+  com.apple.ManagedClient.enroll \
+  com.apple.ManagedClient.startup \
+  com.apple.milod \
+  com.apple.nearbyd \
+  com.apple.NFStorageServer \
+  com.apple.osanalyticshelper \
+  com.apple.parentalcontrols.check \
+com.apple.parentalcontrolsd \
+com.apple.PasscodeSettingsSubscriber \
+com.apple.PerfPowerServices \
+com.apple.PerfPowerServicesExtended \
+com.apple.PerfPowerTelemetryClientRegistrationService \
+com.apple.powerlogHelperd \
+com.apple.progressd \
+com.apple.rapportd \
+com.apple.RemoteDesktop.PrivilegeProxy \
+com.apple.remotemanagementd \
+com.apple.remotepairingd \
+com.apple.rtcreportingd \
+com.apple.screensharing \
+com.apple.searchpartyd \
+com.apple.SecuritySubscriber \
+com.apple.seld \
+com.apple.spindump \
+com.apple.stickersd \
+com.apple.studentd \
+com.apple.SubmitDiagInfo \
+com.apple.symptomsd \
+com.apple.symptomsd-diag \
+com.apple.systemstats.analysis \
+com.apple.systemstats.daily \
+com.apple.systemstats.microstackshot_periodic \
+com.apple.tailspind \
+com.apple.TMCacheDelete \
+com.apple.wifianalyticsd; do
+if sudo launchctl print "system/${daemon}" >/dev/null 2>&1; then
+( set -x; sudo launchctl bootout "system/${daemon}" ) || true
+fi
+( set -x; sudo launchctl disable "system/${daemon}" ) || true
+done

@@ -1,0 +1,4 @@
+Shut down your Mac, hold the power button to enter Recovery (Options -> Terminal)
+
+csrutil disable
+csrutil enable

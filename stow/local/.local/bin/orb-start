@@ -22,4 +22,7 @@ fi
 
 if ! orb status 2>/dev/null | grep -qi "running"; then
     ( set -x; orb start ) || exit 1
+    until ( set -x; docker info >/dev/null 2>&1 ); do
+      ( set -x; sleep 1 )
+    done
 fi;:
