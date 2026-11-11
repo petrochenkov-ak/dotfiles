@@ -6,6 +6,11 @@ if [ $# -lt 1 ]; then
   exit 1
 fi
 
+if [ -z "${DOCKER_SOCK}" ]; then
+  printf 'Error: DOCKER_SOCK environment variable is not set\n' >&2
+  exit 1
+fi
+
 GITHUB_RUN_ID=42
 GITHUB_WORKSPACE="/github/workspace"
 IMAGE="registry.docker.internal:5000/$1"
@@ -17,7 +22,9 @@ BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main") || exi
 GLOBAL_IGNORE=$(git config --get core.excludesfile) || exit 1
 GLOBAL_IGNORE="${GLOBAL_IGNORE/#\~/$HOME}"
 
-( set -x; docker run --rm \
+( set -x; orb-start ) || exit 1
+( set -x; time docker run --rm \
+  -v "$DOCKER_SOCK:/var/run/docker.sock" \
   -v "$PWD:/github/workspace" \
   -v "$GLOBAL_IGNORE:/etc/gitignore_global:ro" \
   -e GIT_CONFIG_PARAMETERS="'core.excludesfile=/etc/gitignore_global'" \
