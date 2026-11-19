@@ -1,0 +1,7 @@
+# ~/.makerc - Makefile env file (include ~/.makerc)
+
+# node
+NODE_PATH=/usr/local/lib/node_modules
+# postgres
+# PGDATA=/opt/homebrew/var/postgres
+PGDATA=/Volumes/HDD/var/postgres

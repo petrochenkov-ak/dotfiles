@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+if [ ! -d .git ]; then
+  printf 'skip: .git not exists\n'
+  exit 0
+fi
+
+( set -x; git push -q -f origin main ) || exit 1

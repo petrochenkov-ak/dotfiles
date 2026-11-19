@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+if [ $# -lt 1 ]; then
+  echo "Usage: $(basename "${BASH_SOURCE}") <command> [args...]" >&2
+  exit 1
+fi
+
+GIT_ROOT="${PWD%%/git/*}/git"
+AFTER_GIT="${PWD#*/git/}"
+FIRST_SEGMENT="${AFTER_GIT%%/*}"
+
+if [[ "$PWD" != */git && "$PWD" != */git/* ]]; then
+  echo "Error: Current directory '$PWD' must be inside */git/*" >&2
+  exit 1
+fi
+
+if [ "$PWD" = "$GIT_ROOT" ] || [ "$FIRST_SEGMENT" = ".scripts" ]; then
+  SEARCH_ROOT="$GIT_ROOT"
+  DEPTH=2
+else
+  SEARCH_ROOT="${GIT_ROOT}/${FIRST_SEGMENT}"
+  DEPTH=1
+fi
+
+TARGETS=()
+while IFS= read -r -d '' dir; do
+  TARGETS+=("$dir")
+done < <(find "$SEARCH_ROOT" -mindepth "$DEPTH" -maxdepth "$DEPTH" -type d -not -name '.*' -print0 | sort -z)
+
+for dir in "${TARGETS[@]}"; do
+  if [ -n "${REPO_CHECK:-}" ]; then
+    ( cd "$dir" && eval "$REPO_CHECK" ) || continue
+  fi
+  ( set -x; cd "$dir" && "$@" ) || {
+    echo "Error: '$*' failed in '$dir' (exit code: $?)" >&2
+    exit 1
+  }
+done

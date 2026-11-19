@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 1 ]] && echo "usage: ${0##*/} prompt_file" && exit 1
+
+if [ -n "$(git status --porcelain)" ]; then
+    echo "❌ Error: Working directory is dirty! Commit or stash your changes before running AI."
+    exit 1
+fi
+
+branch_name="$(prompt-branch-name "$1")" || exit
+(
+    set -x
+    git checkout main -q && \
+    git pull origin main -q && \
+    git checkout -B "$branch_name" -q
+)

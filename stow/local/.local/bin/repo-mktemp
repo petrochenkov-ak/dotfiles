@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+GIT_ROOT=$(cd "$HOME/git" 2>/dev/null && pwd -P)
+if [[ -z "$GIT_ROOT" || ! "$PWD" =~ ^"$GIT_ROOT"/[^/]+/[^/]+$ ]]; then
+  printf 'Error: Must be run strictly inside ~/git/owner/repo (current: %s)\n' "$PWD" >&2
+  exit 1
+fi
+
+REPO_SLUG="${PWD#"$GIT_ROOT"/}"
+SAFE_REPO="${REPO_SLUG//\//_}"
+SUFFIX="${1//[^a-zA-Z0-9._-]/_}"
+
+mktemp -d --tmpdir "gha_${SAFE_REPO}${SUFFIX:+_$SUFFIX}_XXXXXX"

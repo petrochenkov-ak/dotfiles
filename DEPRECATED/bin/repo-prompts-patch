@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+# ( set -x; "${BASH_SOURCE%/*}"/repo-prompts-clean ) || exit
+while read -r prompt_file; do
+    prompt_dir="${prompt_file%/*}"
+    prompt_filename="${prompt_file##*/}"
+    output_file="${prompt_dir}/${prompt_filename%.md}_output✅.md"
+    [ -f "$output_file" ] && echo "SKIP: ${output_file} exists" && continue
+    ( set -x; prompt-patch "$prompt_file" "$output_file" ) || exit
+done < <(find .prompts/patch -type f -name "*.md" ! -name "_*" | grep -v "_output")
