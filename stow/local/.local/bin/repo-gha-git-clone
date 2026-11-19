@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+if [ $# -lt 1 ]; then
+  printf 'Usage: repo-git-clone-shallow TARGET_DIR\n' >&2
+  exit 1
+fi
+
+TARGET_DIR="$1"
+BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || exit 1
+ORIGIN_URL=$(git remote get-url origin 2>/dev/null) || exit 1
+
+(
+  set -x
+  git -c core.hooksPath=/dev/null -C "$TARGET_DIR" init -q &&
+  git -C "$TARGET_DIR" config core.hooksPath /dev/null &&
+  git -C "$TARGET_DIR" remote add origin "$ORIGIN_URL" &&
+  git -C "$TARGET_DIR" fetch -q --depth=1 origin "$BRANCH_NAME" &&
+  git -C "$TARGET_DIR" checkout -q -B "$BRANCH_NAME" FETCH_HEAD
+) || exit 1

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+SCRIPTS_SRC_DIR=~/git/petrochenkov-ak/dotfiles/repo-dotfiles/python/packages/scripts
+
+# python/packages/.scripts
+( set -x; rsync -a --delete --mkpath "${SCRIPTS_SRC_DIR}/" python/packages/.scripts/ ) || exit 1

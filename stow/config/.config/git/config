@@ -1,0 +1,49 @@
+# https://git-scm.com/docs/git-config
+[alias]
+	br = branch
+	df = diff
+	dwc = diff -w -M --color-words
+	fix = rebase -i origin/master
+	ll = log -p
+	st = status
+	rb = rebase
+	rbc = rebase --continue
+	re = remote
+	tree = log --graph --decorate --pretty=oneline --abbrev-commit
+	up = pull --rebase
+
+[core]
+	excludesfile = ~/.config/git/ignore
+	filemode = false
+	bare = false
+	preloadindex = true
+	hooksPath = ~/.config/git/hooks
+
+# unicode support (git status):
+	precomposeunicode = true
+	quotePath = false
+
+[color]
+	ui = auto
+	interactive = auto
+
+[credential]
+	helper = osxkeychain
+
+[push]
+	default = simple
+	followTags = true # git 2.4.1+
+
+[init]
+	defaultBranch = main
+	templatedir = ~/.config/git/templates
+
+[user]
+	name = Petrochenkov Andrey Konstantinovich
+	email = andrewpetrochenkov@users.noreply.github.com
+
+[includeIf "gitdir:~/git/petrochenkov-ak/**"]
+	path = ~/.config/git/config_petrochenkov_ak
+
+[includeIf "gitdir:~/git/petrochenkov-ak-lab/**"]
+	path = ~/.config/git/config_petrochenkov_ak_lab

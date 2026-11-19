@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 1 ]] && echo "usage: ${0##*/} path" && exit 1
+
+perl -0777 -pi -e '
+  s/Working\.\.\.\n//gm;
+  s/Attempting to call tool.*?\n//gm;
+  s/Successfully called.*?\n//gm;
+  s/Tool response:.*?\n//gs;
+  s/^\s*\n//mg
+' "${1}"

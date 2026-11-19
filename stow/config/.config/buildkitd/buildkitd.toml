@@ -1,0 +1,21 @@
+[worker.containerd]
+  gc = true
+  gckeepstorage = 50000 # 50 GB
+
+[worker.oci]
+  max-parallelism = 1
+
+[registry."registry.docker.internal:5000"]
+  http = true
+  insecure = true
+
+[registry."ghcr.io"]
+  mirrors = ["ghcr.v6.army", "ghcr.docker4u.ru", "ghcr.timeweb.cloud"]
+
+[registry."docker.io"]
+  mirrors = [
+    "mirror.gcr.io",
+    "dockerhub.timeweb.cloud",
+    "cr.yandex/mirror",
+    "dockerhub1.beget.com"
+  ]

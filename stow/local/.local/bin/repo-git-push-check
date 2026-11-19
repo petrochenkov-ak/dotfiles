@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+current_branch=$(git symbolic-ref --short HEAD 2>/dev/null) || exit 1
+remote_branch="origin/$current_branch"
+
+( set -x; git fetch origin "$current_branch" -q ) 2>/dev/null
+
+if ! git rev-parse --verify "$remote_branch" >/dev/null 2>&1; then
+  exit 0
+fi
+
+if git merge-base --is-ancestor "$remote_branch" HEAD >/dev/null 2>&1; then
+  exit 0
+fi
+
+if git merge-base --is-ancestor HEAD "$remote_branch" >/dev/null 2>&1; then
+  echo "Error: local branch is behind $remote_branch. Run 'git pull' first." >&2
+  exit 1
+fi
+
+{
+  echo "Error: local and remote histories diverge (stale or recreated .git)."
+  echo "CRITICAL: automatic push blocked to prevent data loss."
+  echo "To overwrite the remote repository, run manually:"
+  echo "cd $PWD && git push --force -u origin $current_branch"
+} >&2
+
+exit 1

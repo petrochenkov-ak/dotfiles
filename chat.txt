@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+if [ $# -lt 1 ]; then
+  printf 'Usage: repo-gha-docker-run IMAGE [ARGS...]\n' >&2
+  exit 1
+fi
+
+IMAGE_NAME="$1"
+IMAGE="registry.docker.internal:5000/$IMAGE_NAME"
+shift
+
+( set -x; repo-gha-init ) || exit 1
+
+REPO_FULL_NAME=$(repo-gh-full-name) || exit 1
+WORK_TMP=$(set -x; repo-mktemp "$IMAGE_NAME") || exit 1
+ENV_FILE=$(set -x; repo-gha-docker-env-mktemp "$REPO_FULL_NAME") || exit 1
+
+cleanup() {
+  rm -rf "$TMP_REPO_DIR" "$ENV_FILE"
+}
+trap cleanup EXIT
+
+( set -x; repo-gha-git-clone "$WORK_TMP" ) || exit 1
+
+RAW_OPTS=$(set -x; cd "$WORK_TMP" && repo-gha-docker-opts "$ENV_FILE") || exit 1
+IFS=$'\n' read -r -d '' -a DOCKER_OPTS <<< "$RAW_OPTS"
+
+( set -x; docker run --rm "${DOCKER_OPTS[@]}" "$IMAGE" "$@" ) || exit 1
+( set -x; git fetch -q --prune origin ) || exit 1
+---
+команда для запуска docker action ЛОКАЛЬНО.
+но репозиторий должен существовать
+
+как в таком случае корректнее
+1) создавать репозиторий всегда если его нет
+2) создавать репозиторий по каким-то условиям (как?)
+3) пропускать docker action если репозитория нет
+4) другое
+
+оцени таблицей по шкале 1..100

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+SRC_DIR=~/git/petrochenkov-ak/dotfiles/repo-dotfiles/repo-scripts
+
+if [ -d ".scripts" ]; then
+    ( set -x; find ".scripts" -type l -delete ) 2>/dev/null || exit 1
+fi
+
+# default
+( set -x; rsync -aL --delete --mkpath --chmod=+x "$SRC_DIR/git/." "$PWD/.scripts/git/" ) || exit 1
+( set -x; rsync -aL --delete --mkpath --chmod=+x "$SRC_DIR/github/." "$PWD/.scripts/github/" ) || exit 1
+( set -x; rsync -aL --delete --mkpath --chmod=+x "$SRC_DIR/repo-setup.sh" "$PWD/.scripts/repo-setup.sh" ) || exit 1
+( set -x; rsync -aL --delete --mkpath --chmod=+x "$SRC_DIR/Terminal.sh" "$PWD/.scripts/Terminal.sh" ) || exit 1

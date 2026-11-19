@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+REMOTE_URL=$(git config --get remote.origin.url)
+[ -z "$REMOTE_URL" ] && echo "ERROR: no remote origin" && exit 1
+
+BASE_URL=$(echo "$REMOTE_URL" | sed -E 's|git@github.com:|https://github.com/|; s|https://github.com$|https://github.com/|; s|\.git$||')
+
+COMMIT_HASH=$(git rev-parse HEAD)
+
+( set -x; open "${BASE_URL}/commit/${COMMIT_HASH}" )

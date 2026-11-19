@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 1 ]] && echo "usage: ${0##*/} name" && exit 1
+
+. ~/.bashrc || exit 1
+export NO_PROXY="localhost,127.0.0.1,registry.docker.internal"
+
+BAKE_FILES=("-f" "docker/docker-bake.json")
+# BAKE_FILES+=("-f" "docker/images/$1/docker-bake.hcl")
+for f in docker/images/*/docker-bake.json; do
+  BAKE_FILES+=("-f" "$f")
+done
+
+( set -x; docker-buildx-init ) || exit 1
+( set -x; /opt/homebrew/bin/docker-buildx bake --no-cache "${BAKE_FILES[@]}" --progress=plain "$@" ) || exit 1

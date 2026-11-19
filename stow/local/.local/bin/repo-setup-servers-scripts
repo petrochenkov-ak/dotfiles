@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+HOST_SRC_DIR=$HOME/git/petrochenkov-ak/dotfiles/repo-dotfiles/servers/host/scripts
+ROOT_SRC_DIR=$HOME/git/petrochenkov-ak/dotfiles/repo-dotfiles/servers/root/scripts
+
+( set -x; rsync -a --delete --mkpath "$ROOT_SRC_DIR/" servers/.scripts/ ) || exit 1
+( set -x; find servers -mindepth 1 -maxdepth 1 -type d ! -name ".*" ! -name "_*" -exec rsync -a --delete --mkpath "$HOST_SRC_DIR/" {}/.scripts/ \; )

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 1 ]] && echo "usage: ${0##*/} path" && exit 1
+
+( set -x; prompt-env-check ) || exit
+
+export AIDER_CHECK_UPDATE=false
+export AIDER_MODEL="${LLM_PROVIDER}/${LLM_MODEL}"
+export FILELIST="${1%/*}/input.filelist"
+
+[ -z "$LLM_MODEL" ] && echo "ERROR: LLM_MODEL must be defined" && exit 1
+! [ -e "$FILELIST" ] && echo "ERROR: $FILELIST not found" && exit 1
+
+mapfile -t FILE_ARGS < <(sed '/^$/q' "$FILELIST" | grep -v '^$')
+
+( set -x; prompt-build "$1" ) || exit
+( set -x; aider \
+  --model "openai/${LLM_MODEL}" \
+  --no-stream \
+  --color \
+  --editor-edit-format editor-diff \
+  --dry-run \
+  --no-pretty \
+  --message-file "$1" \
+  "${FILE_ARGS[@]}" ) > "${1%.md}.diff"

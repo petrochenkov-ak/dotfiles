@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+USER_ID=$(id -u) || exit 1
+
+# ( set -x; orb shutdown ) || exit 1
+( set -x; orb stop ) 2>/dev/null || true
+( set -x; sleep 3 )
+( set -x; launchctl kickstart -k "gui/${USER_ID}/com.orbstack.mac.orbstackd" ) 2>/dev/null || ( set -x; orb start )

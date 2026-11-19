@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+CURRENT_BRANCH=$(git branch --show-current) || exit
+[ -z "$CURRENT_BRANCH" ] && echo "ERROR: unknown branch" && exit 1
+
+( set -x; git push -q origin "$CURRENT_BRANCH" )

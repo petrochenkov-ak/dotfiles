@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+if [ -z "${COLIMA_HOME}" ]; then
+  echo "ERROR: COLIMA_HOME is not set"
+  exit 1
+fi
+
+if [ -z "${LIMA_HOME}" ]; then
+  echo "ERROR: LIMA_HOME is not set"
+  exit 1
+fi
+
+if [ -z "${DOCKER_REGISTRY_IP}" ]; then
+  echo "ERROR: DOCKER_REGISTRY_IP is not set"
+  exit 1
+fi
+
+COLIMA_STATUS=$(colima status 2>&1) && COLIMA_RUNNING=true || COLIMA_RUNNING=false
+
+if [ "${COLIMA_RUNNING}" != "true" ]; then
+  ( set -x; colima start --vm-type=vz --mount-type=virtiofs --cpu 4 --memory 3 --disk 50 --mount "${HOME}":w --mount /Volumes:w ) || exit 1
+  ( set -x; colima ssh -- sudo sh -c "sed -i '/registry\.docker\.internal/d' /etc/hosts && echo '${DOCKER_REGISTRY_IP} registry.docker.internal' >> /etc/hosts" ) || exit 1
+  ( set -x; colima ssh -- sudo mkdir -p /etc/docker/certs.d/registry.docker.internal:5000 ) || exit 1
+  ( set -x; colima ssh -- sudo tee /etc/docker/certs.d/registry.docker.internal:5000/ca.crt < ~/.docker/certs.d/registry.docker.internal:5000/ca.crt >/dev/null ) || exit 1
+  ( set -x; docker context use colima ) || exit 1
+fi;:
