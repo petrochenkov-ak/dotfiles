@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 2 ]] && echo "usage: ${0##*/} prompt_file output_file" && exit 1
+
+( set -x; prompt-prepare "$1" ) || exit
+( set -x; prompt-checkout "$1" ) || exit
+( set -x; prompt-aider-patch "$1" "$2" ) || exit
+( set -x; prompt-clean "$2" ) || exit
+( set -x; prompt-test "$1" ) || { ( set -x; prompt-git-reset ); exit 1; }
+( set -x; prompt-git-commit "success: prompt execution completed $1" ) || exit
+( set -x; prompt-pr-create "$1" "$2" ) || exit
+( set -x; cat "$2" )

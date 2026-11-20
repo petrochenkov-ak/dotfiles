@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+while read -r md_file; do
+    ( set -x; prompt-build "$md_file" ) || exit
+done < <(find .prompts -type f -name "[a-zA-Z0-9]*.md" | grep -v "answer.md")

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+echo "post-checkout hook ..."
+
+if [ "$3" = "1" ]; then
+    CURRENT_BRANCH=$(git branch --show-current) || exit
+    if [ "$CURRENT_BRANCH" = "main" ] || [ "$CURRENT_BRANCH" = "master" ]; then
+        if git remote get-url origin >/dev/null 2>&1; then
+            ( set -x; git pull origin "$CURRENT_BRANCH" --quiet ) || exit
+            ( set -x; git remote prune origin >/dev/null 2>&1 ) || exit
+        fi
+    fi
+fi;:

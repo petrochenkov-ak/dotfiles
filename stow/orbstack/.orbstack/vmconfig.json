@@ -1,0 +1,5 @@
+{
+	"data_dir": "/Volumes/ADATA-500GB-DOCKER/orbstack-data",
+	"memory_mib": 6144,
+	"power.pause_in_sleep": false
+}

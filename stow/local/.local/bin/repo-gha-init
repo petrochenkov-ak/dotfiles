@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+( set -x; repo-git-dir-check ) || exit 1
+( set -x; repo-git-checkout-ai-branch ) || exit 1
+( set -x; repo-git-commit ) || exit 1
+( set -x; repo-gh-git-remote-set ) || exit 1
+( set -x; repo-gha-git-fetch-or-fail ) || exit 1
+( set -x; repo-git-push ) || exit 1

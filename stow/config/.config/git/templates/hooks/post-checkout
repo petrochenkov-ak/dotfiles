@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+if [ -f .git/hooks/post-checkout ]; then
+    ( set -x; .git/hooks/post-checkout "$@" ) || exit
+fi;:

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+IMAGE_NAME="$1"
+
+if [ $# -lt 1 ]; then
+  echo "Usage: $(basename "${BASH_SOURCE}") <image_name>" >&2
+  exit 1
+fi
+
+if [[ "$IMAGE_NAME" == *:* ]]; then
+  echo "${IMAGE_NAME##*:}"
+  exit 0
+fi
+
+TAGS=()
+while IFS= read -r tag; do
+  [ -n "$tag" ] && TAGS+=("$tag")
+done < <(docker images --format '{{.Repository}}:{{.Tag}}' | grep -E "(^|/)${IMAGE_NAME}:" | awk -F: '{print $NF}' | grep -v '^<none>$' | sort -u)
+
+if [ ${#TAGS[@]} -eq 0 ]; then
+  echo "Error: No local tag found for image '$IMAGE_NAME'" >&2
+  exit 1
+fi
+
+if [ ${#TAGS[@]} -gt 1 ]; then
+  echo "Error: Multiple local tags found for '$IMAGE_NAME' (${TAGS[*]}), specify tag explicitly" >&2
+  exit 1
+fi
+
+echo "${TAGS}"
