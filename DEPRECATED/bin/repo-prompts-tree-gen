@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+! [ -d .prompts ] && { ( set -x; mkdir .prompts ) || exit; }
+
+while read -r md_file; do
+    ( set -x; prompt-tree-gen "$md_file" ) || exit
+done < <(find .prompts -maxdepth 1 -type f -name "[a-zA-Z0-9]*.md")

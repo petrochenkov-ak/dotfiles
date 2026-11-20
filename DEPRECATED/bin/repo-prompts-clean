@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+find .prompts -type f -name "*.filelist" -print0 | while IFS= read -r -d '' filelist_path; do
+    dir_path=$(dirname "$filelist_path")
+    md_count=$(find "$dir_path" -maxdepth 1 -type f -name "*.md" | wc -l)
+    if [ "$md_count" -eq 0 ]; then
+        ( set -x; rm "$filelist_path" )
+    fi
+done
+[[ -z "$(ls .prompts)" ]] && { ( set -x; touch .prompts/_prompt.md ) || exit; };:

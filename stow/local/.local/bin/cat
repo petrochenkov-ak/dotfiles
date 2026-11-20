@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ "$1" == *.plist ]] && { # .plist
+	# convert binary .plist to xml
+	file="$(file -b "$1")" || exit
+	[[ $file == *"binary"* ]] &&  { plutil -convert xml1 "$1" || exit; }
+}
+/bin/cat "$@"

@@ -1,0 +1,11 @@
+{
+    "cmd": ["swift","$file"],
+    "selector": "file.swift,text.swift",
+    "variants":
+    [
+        {
+            "name": "Run",
+            "cmd": ["swift","$file"]
+        }
+    ]
+}

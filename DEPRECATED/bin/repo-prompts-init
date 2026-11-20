@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+! [ -d .prompts/agent ] && { ( set -x; mkdir -p .prompts/agent ) || exit; }
+! [ -d .prompts/chat ] && { ( set -x; mkdir -p .prompts/chat ) || exit; }
+! [ -d .prompts/patch ] && { ( set -x; mkdir -p .prompts/patch ) || exit; }
+
+[[ -z "$(ls .prompts/agent)" ]] && ( set -x; touch .prompts/agent/_template.md )
+[[ -z "$(ls .prompts/chat)" ]] && ( set -x; touch .prompts/chat/_template.md )
+[[ -z "$(ls .prompts/patch)" ]] && ( set -x; touch .prompts/patch/_template.md )
+exit 0

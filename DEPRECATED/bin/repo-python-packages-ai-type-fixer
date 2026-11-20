@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+export MODEL="openai/deepseek-v4-flash"
+export AIDER_LOAD_FILE=$(mktemp)
+export PROMPT_FILE=~/git/ai-prompts/prompts/python/type_fixer.md
+source "$HOME/.secrets.env" || exit
+
+! [ -d python/packages ] && echo "ERROR: ${PWD}/python/packages/ not exists" && exit 1
+! [ -e "${PROMPT_FILE}" ] && echo "ERROR: ${PROMPT_FILE} not exists" && exit 1
+
+( set -x; python -m python_packages_type_linter "$@" | awk '{print "/add " $0}' | tee "$AIDER_LOAD_FILE" ) || exit
+[ "${PIPESTATUS[0]}" -eq 0 ] && [ -s "$AIDER_LOAD_FILE" ] || exit 0
+
+( set -x; git init && git add . ) || exit
+( set -x; aider \
+  --model "$MODEL" \
+  --load "$AIDER_LOAD_FILE" \
+  --message-file "${PROMPT_FILE}"
+) || exit
+( set -x; git add . )
+

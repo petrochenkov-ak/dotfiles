@@ -1,0 +1,16 @@
+[MASTER]
+disable=
+    C0114, # missing-module-docstring
+ignore-patterns = .*/migrations/.*
+ignore-paths = .*/migrations/.*
+load-plugins=pylint_django
+django-settings-module=pylint_django_settings
+
+[MESSAGES CONTROL]
+disable=missing-docstring
+
+[DESIGN]
+max-parents=13
+
+[TYPECHECK]
+generated-members=REQUEST,acl_users,aq_parent,objects,_meta,id

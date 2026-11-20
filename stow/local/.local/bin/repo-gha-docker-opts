@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+if [ $# -lt 1 ]; then
+  printf 'Usage: repo-gha-docker-opts ENV_FILE\n' >&2
+  exit 1
+fi
+
+if [ -z "${DOCKER_SOCK}" ]; then
+  printf 'Error: DOCKER_SOCK environment variable is not set\n' >&2
+  exit 1
+fi
+
+ENV_FILE="$1"
+GITHUB_WORKSPACE="/github/workspace"
+SSH_CONFIG_PATH="$HOME/.secrets/gha/ssh_config"
+GIT_CONFIG_PATH="$HOME/.secrets/gha/gitconfig"
+
+OPTS=(
+  "--env-file" "$ENV_FILE"
+  "-v" "$DOCKER_SOCK:/var/run/docker.sock"
+  "-v" "$PWD:$GITHUB_WORKSPACE"
+  "-w" "$GITHUB_WORKSPACE"
+  "-v" "/run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock"
+  "-v" "$HOME/.ssh/known_hosts:/root/.ssh/known_hosts:ro"
+  "-v" "${SSH_CONFIG_PATH}:/root/.ssh/config:ro"
+  "-v" "${GIT_CONFIG_PATH}:/root/.gitconfig:ro"
+)
+
+printf '%s\n' "${OPTS[@]}"

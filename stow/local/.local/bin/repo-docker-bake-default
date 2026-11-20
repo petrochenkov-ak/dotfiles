@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+. ~/.bashrc || exit 1
+export NO_PROXY="localhost,127.0.0.1,registry.docker.internal"
+
+if [ ! -e docker/images ]; then
+  echo "SKIP: docker/images not exists"
+  exit 0
+fi
+
+BAKE_FILES=("-f" "docker/docker-bake.json")
+for f in docker/images/*/docker-bake.json; do
+  BAKE_FILES+=("-f" "$f")
+done
+
+( set -x; docker-buildx-init ) || exit 1
+( set -x; /opt/homebrew/bin/docker-buildx bake "${BAKE_FILES[@]}" --progress=plain "$@" ) || exit 1
+( set -x; repo-docker-images-pull ) || exit 1

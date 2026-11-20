@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+# known-issues: media players has own custom sound volume
+# fix: control afplay volume
+
+trap "pid-killall -9 $$" 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 PIPE
+
+# volume: afplay -v value (0-9999), 1=Normal
+[[ "$@" == *"-v"* ]] && { /usr/bin/afplay "$@"; exit; }
+
+# headphones are plugged
+headphones | grep -q 1 && { /usr/bin/afplay "$@"; exit; }
+
+volume="$(volume)" || exit
+# todo: control volume by time of day
+[[ $volume -lt 10 ]] && v=2 # too low (high media player volume?)
+[[ $volume -gt 20 ]] && v=0.5
+[[ $volume -gt 30 ]] && v=0.3
+[[ $volume -gt 40 ]] && v=0.2
+[[ $volume -gt 50 ]] && v=0.15
+[[ $volume -gt 60 ]] && v=0.1
+[[ $volume -gt 70 ]] && v=0.07
+[[ $volume -gt 80 ]] && v=0.05
+[[ $volume -gt 90 ]] && v=0.03
+[[ -n $v ]] && set -- "$@" -v "$v"
+/usr/bin/afplay "$@"

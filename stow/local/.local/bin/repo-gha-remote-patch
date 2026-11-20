@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+if [ $# -lt 1 ]; then
+  printf 'Usage: repo-gha-git-remote-set GITHUB_REPOSITORY\n' >&2
+  exit 1
+fi
+
+GITHUB_REPOSITORY="$1"
+GH_TOKEN_VAL=$(gh auth token) || exit 1
+GH_PROTO="https://"
+GH_HOST="github.com"
+GH_AUTH_PREFIX="${GH_PROTO}x-access-token:${GH_TOKEN_VAL}@${GH_HOST}"
+
+(
+  set -x
+  git remote set-url origin "${GH_AUTH_PREFIX}/${GITHUB_REPOSITORY}.git"
+) || exit 1
