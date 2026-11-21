@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $# -ne 1 || "$1" != *:* ]]; then
+  echo "Usage: $(basename "$0") <name:tag>" >&2
+  exit 1
+fi
+
+: "${DOCKER_REGISTRY_HOST:?DOCKER_REGISTRY_HOST is required}"
+
+name="${1%%:*}"
+tag="${1##*:}"
+
+if [[ -z "$name" || -z "$tag" ]]; then
+  echo "Error: image name and tag must not be empty" >&2
+  exit 1
+fi
+
+set +e
+digest=$( set -x; crane digest --insecure "${DOCKER_REGISTRY_HOST}/${name}:${tag}" )
+rc=$?
+set -e
+
+if [[ $rc -eq 0 && -n "$digest" ]]; then
+  ( set -x; crane delete --insecure "${DOCKER_REGISTRY_HOST}/${name}@${digest}" ) || true
+fi
+
+( set -x; ssh "registry.docker.internal" "docker exec docker-registry-prod rm -rf '/var/lib/registry/docker/registry/v2/repositories/${name}/_manifests/tags/${tag}'" ) || exit 1

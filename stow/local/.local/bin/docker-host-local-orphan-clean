@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+orphan_names=$( set -x; docker-host-local-orphan-image-list ) || exit 1
+
+if [[ -z "$orphan_names" ]]; then
+  echo "SKIP: no local orphan images to delete" >&2
+  exit 0
+fi
+
+while IFS= read -r image_name; do
+  ( set -x; docker-host-local-image-rm-all "$image_name" ) || exit 1
+done <<< "$orphan_names"

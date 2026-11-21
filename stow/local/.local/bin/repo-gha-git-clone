@@ -12,9 +12,5 @@ ORIGIN_URL=$(git remote get-url origin 2>/dev/null) || exit 1
 
 (
   set -x
-  git -c core.hooksPath=/dev/null -C "$TARGET_DIR" init -q &&
-  git -C "$TARGET_DIR" config core.hooksPath /dev/null &&
-  git -C "$TARGET_DIR" remote add origin "$ORIGIN_URL" &&
-  git -C "$TARGET_DIR" fetch -q --depth=1 origin "$BRANCH_NAME" &&
-  git -C "$TARGET_DIR" checkout -q -B "$BRANCH_NAME" FETCH_HEAD
+  git -c core.hooksPath=/dev/null clone -q --depth=1 --no-single-branch --branch "$BRANCH_NAME" "$ORIGIN_URL" "$TARGET_DIR"
 ) || exit 1

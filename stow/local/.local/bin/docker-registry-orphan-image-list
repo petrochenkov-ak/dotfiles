@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+git_repos_image_names=$( set -x; git-repos-docker-image-name-list ) || exit 1
+registry_images=$( set -x; docker-registry-image-list ) || exit 1
+
+if [[ -z "$registry_images" ]]; then
+  echo "SKIP: registry catalog is empty" >&2
+  exit 0
+fi
+
+hub_found=()
+hub_missing=()
+
+while IFS= read -r image_name_tag; do
+  repo="${image_name_tag%%:*}"
+  tag="${image_name_tag##*:}"
+
+  if [[ "$repo" == "build-cache" ]]; then
+    if ! echo "$git_repos_image_names" | grep -Fxq "$tag"; then
+      echo "$image_name_tag"
+    fi
+    continue
+  fi
+
+  if echo "$git_repos_image_names" | grep -Fxq "$repo"; then
+    continue
+  fi
+
+  if [[ ${#hub_found[@]} -gt 0 ]] && printf '%s\n' "${hub_found[@]}" | grep -Fxq "$repo"; then
+    continue
+  fi
+
+  if [[ ${#hub_missing[@]} -gt 0 ]] && printf '%s\n' "${hub_missing[@]}" | grep -Fxq "$repo"; then
+    echo "$image_name_tag"
+    continue
+  fi
+
+  dockerhub_tags=$( set -x; docker-image-dockerhub-tags "$repo" ) || exit 1
+  if [[ -n "$dockerhub_tags" ]]; then
+    hub_found+=("$repo")
+    continue
+  fi
+
+  hub_missing+=("$repo")
+  echo "$image_name_tag"
+done <<< "$registry_images"

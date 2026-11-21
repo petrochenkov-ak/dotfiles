@@ -5,6 +5,6 @@
 
 ( set -x; find docker/images -mindepth 1 -maxdepth 1 -type d ! -name ".*" -exec bash -c '
     for d; do
-        ( set -x; docker-pull-all-tags "${d##*/}" ) || exit 1
+        ( set -x; docker-pull-all "${d##*/}" ) || exit 1
     done
 ' _ {} + ) || exit 1

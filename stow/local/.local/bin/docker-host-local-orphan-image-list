@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+git_repos_image_names=$( set -x; git-repos-docker-image-name-list ) || exit 1
+local_images=$( set -x; docker images --format '{{.Repository}}|{{.Tag}}' ) || exit 1
+
+if [[ -z "$local_images" ]]; then
+  echo "SKIP: no local docker images" >&2
+  exit 0
+fi
+
+orphan_names=()
+while IFS='|' read -r repo tag; do
+  [[ "$repo" == "<none>" ]] && continue
+
+  if [[ "$repo" == "build-cache" ]]; then
+    name="$tag"
+  else
+    name="${repo##*/}"
+  fi
+
+  [[ "$name" == "buildkitd" ]] && continue
+
+  if echo "$git_repos_image_names" | grep -Fxq "$name"; then
+    continue
+  fi
+
+  if [[ ${#orphan_names[@]} -gt 0 ]] && printf '%s\n' "${orphan_names[@]}" | grep -Fxq "$name"; then
+    continue
+  fi
+
+  dockerhub_tags=$( set -x; docker-image-dockerhub-tags "$name" ) || exit 1
+  if [[ -n "$dockerhub_tags" ]]; then
+    continue
+  fi
+
+  orphan_names+=("$name")
+  echo "$name"
+done <<< "$local_images"

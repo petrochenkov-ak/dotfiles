@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+if [ -e .git ]; then
+  printf 'Error: .git already exists in %s\n' "$PWD" >&2
+  exit 1
+fi
+
+( set -x; repo-gha-gen-wipe ) || exit 1
+( set -x; git init -q -b main ) || exit 1
+( set -x; repo-gh-git-remote-set ) || exit 1
+( set -x; repo-gh-create ) || exit 1
+( set -x; repo-git-commit ) || exit 1
+( set -x; repo-git-push ) || exit 1

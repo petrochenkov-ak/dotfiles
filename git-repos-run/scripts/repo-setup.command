@@ -3,4 +3,4 @@
 
 CMD="$(basename "${0%.*}")"
 
-( set -x; git-all-repos-exec "${CMD}" )
+( set -x; cd "${BASH_SOURCE%/*}" && git-repos-bin-run "${CMD}" )

@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $# -ne 1 ]]; then
+  echo "Usage: $(basename "$0") <ssh_host>" >&2
+  exit 1
+fi
+
+ssh_host="$1"
+
+git_repos_image_names=$( set -x; git-repos-docker-image-name-list ) || exit 1
+remote_images=$( set -x; ssh "$ssh_host" "docker images --format '{{.Repository}}|{{.Tag}}'" ) || exit 1
+
+if [[ -z "$remote_images" ]]; then
+  echo "SKIP: no docker images on $ssh_host" >&2
+  exit 0
+fi
+
+orphan_names=()
+while IFS='|' read -r repo tag; do
+  [[ "$repo" == "<none>" ]] && continue
+
+  if [[ "$repo" == "build-cache" ]]; then
+    name="$tag"
+  else
+    name="${repo##*/}"
+  fi
+
+  [[ "$name" == "buildkitd" ]] && continue
+
+  if echo "$git_repos_image_names" | grep -Fxq "$name"; then
+    continue
+  fi
+
+  if [[ ${#orphan_names[@]} -gt 0 ]] && printf '%s\n' "${orphan_names[@]}" | grep -Fxq "$name"; then
+    continue
+  fi
+
+  dockerhub_tags=$( set -x; docker-image-dockerhub-tags "$name" ) || exit 1
+  if [[ -n "$dockerhub_tags" ]]; then
+    continue
+  fi
+
+  orphan_names+=("$name")
+  echo "$name"
+done <<< "$remote_images"
