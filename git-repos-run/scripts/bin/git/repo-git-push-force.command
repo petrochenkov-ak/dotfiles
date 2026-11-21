@@ -3,4 +3,4 @@
 
 BIN="$(basename "${BASH_SOURCE%.*}")"
 
-( set -x; cd "${BASH_SOURCE%/*}" && git-repos-bin-run "$BIN" ) || exit 1
+( set -x; cd "${BASH_SOURCE%/*}" && git-repos-bin-run "$BIN" "$@" ) || exit 1

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+find -L ~/git -mindepth 5 -maxdepth 5 -path "$HOME/git/*/*/docker/images/*" ! -path "*/.scripts/*" -type d -exec basename {} \; | sort -u

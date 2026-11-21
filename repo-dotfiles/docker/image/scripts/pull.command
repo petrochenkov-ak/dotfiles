@@ -4,4 +4,4 @@
 
 NAME=$(basename "${BASH_SOURCE%/*/*}")
 
-( set -x; docker-pull-all-tags "$NAME" ) || exit 1
+( set -x; docker-pull-all "$NAME" ) || exit 1

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+( set -x; repo-gh-git-remote-set ) || exit 1
+( set -x; repo-gha-git-fetch-or-fail ) || exit 1
+
+status=$(git status --porcelain) || exit 1
+ahead=$(git log origin/main..HEAD 2>/dev/null)
+
+if [ -n "$status" ] || [ -n "$ahead" ]; then
+  (
+    set -x
+    repo-git-checkout-ai-branch
+    repo-git-commit
+    git rebase -q origin/main
+    repo-git-push
+  ) || exit 1
+else
+  (
+    set -x
+    git checkout -q -B main origin/main
+  ) || exit 1
+fi

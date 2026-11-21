@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+find docker/images -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort

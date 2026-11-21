@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+: "${DOCKER_REGISTRY_HOST:?DOCKER_REGISTRY_HOST is required}"
+
+image_names=$( set -x; crane catalog --insecure "$DOCKER_REGISTRY_HOST" ) || exit 1
+
+if [[ -z "$image_names" ]]; then
+  exit 0
+fi
+
+while IFS= read -r image_name; do
+  tags=$( set -x; crane ls --insecure "${DOCKER_REGISTRY_HOST}/${image_name}" ) || exit 1
+  if [[ -z "$tags" ]]; then
+    continue
+  fi
+
+  sorted_tags=$(echo "$tags" | sort -V)
+  while IFS= read -r tag; do
+    echo "${image_name}:${tag}"
+  done <<< "$sorted_tags"
+done <<< "$image_names"
