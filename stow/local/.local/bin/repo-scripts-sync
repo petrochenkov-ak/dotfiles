@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+( set -x; find . -depth -type d -name ".scripts" -mindepth 1 -exec rm -fr {} + ) || exit 1
+( set -x; repo-scripts-sync-default ) || exit 1
+[ -e docker/compose ] && {
+    ( set -x; repo-scripts-sync-docker-compose ) || exit 1
+}
+[ -e docker/images ] && {
+    ( set -x; repo-scripts-sync-docker-images ) || exit 1
+};:
+[ -e python/packages ] && {
+    ( set -x; repo-scripts-sync-python-packages ) || exit 1
+};:
+[ -e servers ] && {
+    ( set -x; repo-scripts-sync-servers ) || exit 1
+}
+( set -x; find . -type f -name "*.command" ! -perm -111 -exec sh -c 'set -x; chmod +x "$1"' _ {} \; ) || exit 1
+# ( set -x; find . -name Makefile -execdir make all \; ) || exit 1

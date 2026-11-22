@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+set -euo pipefail
+
+refs=("$@")
+if [ ${#refs[@]} -eq 0 ]; then
+  refs=(refs/heads/ refs/remotes/origin/)
+fi
+
+git for-each-ref --format='%(refname:short)' \
+  --exclude='refs/{heads,remotes/origin}/{main,master}' \
+  --exclude='refs/remotes/origin/HEAD' \
+  "${refs[@]}"

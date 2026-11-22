@@ -12,11 +12,7 @@ shift
 
 ( set -x; repo-git-dir-check ) || exit 1
 
-if [ ! -e .git ]; then
-  ( set -x; repo-gha-git-init ) || exit 1
-fi
-
-( set -x; repo-gha-git-prepare ) || exit 1
+( set -x; repo-gha-prepare ) || exit 1
 
 repo_full_name=$(repo-gh-full-name) || exit 1
 work_tmp=$(set -x; repo-mktemp "$image_name") || exit 1
