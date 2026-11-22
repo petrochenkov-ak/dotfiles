@@ -1,14 +1,39 @@
 #!/usr/bin/env bash
-{ set +x; } 2>/dev/null
+echo "post-checkout hook start..."
 
-echo "post-checkout hook ..."
+finish() {
+  local code=$1
+  echo "post-checkout hook done."
+  exit "$code"
+}
 
-if [ "$3" = "1" ]; then
-    CURRENT_BRANCH=$(git branch --show-current) || exit
-    if [ "$CURRENT_BRANCH" = "main" ] || [ "$CURRENT_BRANCH" = "master" ]; then
-        if git remote get-url origin >/dev/null 2>&1; then
-            ( set -x; git pull origin "$CURRENT_BRANCH" --quiet ) || exit
-            ( set -x; git remote prune origin >/dev/null 2>&1 ) || exit
-        fi
-    fi
-fi;:
+if [ "$3" != "1" ]; then
+  finish 0
+fi
+
+current_branch=$(git branch --show-current) || finish 1
+if [ "$current_branch" != "main" ] && [ "$current_branch" != "master" ]; then
+  finish 0
+fi
+
+if ! git rev-parse --verify HEAD >/dev/null 2>&1; then
+  finish 0
+fi
+
+status=$(git status --porcelain) || finish 1
+if [ -n "$status" ]; then
+  finish 0
+fi
+
+if ! git remote get-url origin >/dev/null 2>&1; then
+  finish 0
+fi
+
+if ! ( set -x; git ls-remote --exit-code --heads origin "$current_branch" ) >/dev/null 2>&1; then
+  finish 0
+fi
+
+( set -x; git pull origin "$current_branch" --quiet ) || finish 1
+( set -x; git remote prune origin >/dev/null 2>&1 ) || finish 1
+
+finish 0

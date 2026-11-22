@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+{ set +x; } 2>/dev/null
+
+( set -x; repo-gha-bootstrap ) || exit 1
+( set -x; repo-git-abort-in-progress ) || exit 1
+( set -x; repo-gha-main-reconcile ) || exit 1

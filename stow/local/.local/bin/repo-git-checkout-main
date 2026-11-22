@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+{ set +x; } 2>/dev/null
+
+if git rev-parse --verify origin/main >/dev/null 2>&1; then
+  ( set -x; git checkout -q -B main origin/main ) || exit 1
+else
+  ( set -x; git checkout -q -B main ) || exit 1
+fi

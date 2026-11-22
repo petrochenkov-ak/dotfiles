@@ -1,0 +1,26 @@
+dotfiles/repo-dotfiles/ директория с различными скриптами которые копируются в игнорируремые директории .scripts/ в репозитории
+
+пример:
+{repo}/.github/workflows/xxx.yaml откуда-то надо копировать yaml, но это не scripts
+
+{repo}/.scripts/ директория с базовыми скриптами необходимыми везде
+{repo}/.scripts/git/xxx.sh
+{repo}/.scripts/github/xxx.sh
+
+custom .scripts в зависимости от путей
+{repo}/docker/images/.scripts/ директория с docker images скриптами
+{repo}/python/packages/.scripts/ директория с python packages скриптами
+
+корректно ли github yaml и различные scripts/ директории держать в одной dotfiles/xxx/ директории?
+или это все разное - yaml, scripts
+
+
+как это структурировать в dotfiles/ репозитории?
+как назвать?
+1) dotfiles/repo-dotfiles/
+2) dotfiles/repo-xxx/
+3) dotfiles/xxx/
+4) другое
+
+оцени таблицей варианты по шкале 1..100
+

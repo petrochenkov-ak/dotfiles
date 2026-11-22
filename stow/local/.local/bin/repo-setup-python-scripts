@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-{ set +x; } 2>/dev/null
-
-[ -e python/packages ] && {
-    ( set -x; repo-setup-python-packages-scripts ) || exit 1
-};:

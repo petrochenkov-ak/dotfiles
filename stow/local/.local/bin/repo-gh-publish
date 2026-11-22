@@ -4,7 +4,7 @@
 ( set -x; gh-repo-view-error ) | grep -q "Could not resolve to a Repository" && {
     ( set -x; rm -fr .git ) || exit 1
 }
-( set -x; repo-setup ) || exit 1
+( set -x; repo-scripts-sync ) || exit 1
 ( set -x; git init -q ) || exit 1
 ( set -x; repo-gh-git-remote-set ) || exit 1
 ( set -x; repo-git-fetch-rebase-main ) || exit 1
