@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+default_branch="main"
+
+( set -x; repo-git-dir-check ) || exit 1
+
+if ! ( set -x; git merge --ff-only -q "origin/$default_branch" 2>/dev/null ); then
+  current_branch=$(git symbolic-ref --short HEAD 2>/dev/null || printf 'HEAD')
+  printf 'Error: local branch "%s" has diverged from "origin/%s". Cannot fast-forward automatically; resolve manually.\n' "$current_branch" "$default_branch" >&2
+  exit 1
+fi

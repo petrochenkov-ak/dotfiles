@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+default_branch="main"
+
+( set -x; repo-git-dir-check ) || exit 1
+
+current_branch=$(git symbolic-ref --short HEAD 2>/dev/null || echo "")
+
+if [ "$current_branch" != "$default_branch" ]; then
+  if git show-ref --verify --quiet "refs/heads/$default_branch"; then
+    ( set -x; git checkout -q "$default_branch" ) || exit 1
+  elif git show-ref --verify --quiet "refs/remotes/origin/$default_branch"; then
+    ( set -x; git checkout -q -b "$default_branch" "origin/$default_branch" ) || exit 1
+  else
+    printf 'Error: branch "%s" does not exist locally or on origin.\n' "$default_branch" >&2
+    exit 1
+  fi
+
+  if [ -n "$current_branch" ]; then
+    ( set -x; git branch -q -d "$current_branch" 2>/dev/null ) || true
+  fi
+fi;:

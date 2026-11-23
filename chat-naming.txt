@@ -1,0 +1,13 @@
+xxx-gha формат имен для github docker action
+
+мне нужны actions для check и для форматирования
+это нужно для нескольких технологий - python, dockerfile, sql, js, etc
+
+xxx-check-gha для проверки
+а как назвать для форматирования? можно ли вообще создать ЕДИНЫЙ naming convention для разных технологий
+1) xxx-format-gha
+2) xxx-remake-gha
+3) xxx-fix-gha
+4) xxx-xxx-gha другое
+
+предложи варианты таблицей с оценкой по шкале 1..100 от лучших к худшим

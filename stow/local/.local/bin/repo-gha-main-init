@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+{ set +x; } 2>/dev/null
+
+if git rev-parse --verify HEAD >/dev/null 2>&1; then
+  exit 0
+fi
+
+( set -x; git add -A ) || exit 1
+
+if ! git diff --cached --quiet; then
+  ( set -x; git commit --no-verify -q -m "chore: initial commit" ) || exit 1
+else
+  ( set -x; git commit --no-verify -q --allow-empty -m "chore: initial commit" ) || exit 1
+fi
