@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 { set +x; } 2>/dev/null
 
-( set -x; colima-start )
+( set -x; docker-vm-start )
