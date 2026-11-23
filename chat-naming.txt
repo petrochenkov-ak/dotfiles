@@ -1,13 +1,19 @@
-xxx-gha формат имен для github docker action
+docker-xxx мои custom bin команды которые в dotfiles/stow/xxx
+docker-registry-xxx в том числе
 
-мне нужны actions для check и для форматирования
-это нужно для нескольких технологий - python, dockerfile, sql, js, etc
 
-xxx-check-gha для проверки
-а как назвать для форматирования? можно ли вообще создать ЕДИНЫЙ naming convention для разных технологий
-1) xxx-format-gha
-2) xxx-remake-gha
-3) xxx-fix-gha
-4) xxx-xxx-gha другое
+как лучше для colima?
+1) colima-xxx
++ кратко
+- нет единого convention
+2) docker-colima-xxx
+- длинно
++ единый convention
+3) другое
 
-предложи варианты таблицей с оценкой по шкале 1..100 от лучших к худшим
+важно -
+1) вызывать будет автоматически тк прописано в hardcoded скриптах, вручную ничего не будет писаться никогда
+2) docker cli плагинов нет, конфликт невозможен
+3) вызываться будет как docker-vm-start где custom команда. поэтому варианты типа docker-host-up не предлагай, лишнее. docker-vm-start all in one единая точка входа
+
+оцени таблицей кратко по шкале 1..100

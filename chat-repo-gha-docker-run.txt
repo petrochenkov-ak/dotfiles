@@ -10,7 +10,7 @@ image_name="$1"
 image="registry.docker.internal:5000/$image_name"
 shift
 
-( set -x; docker-start ) || exit 1
+( set -x; docker-vm-start ) || exit 1
 ( set -x; repo-git-dir-check ) || exit 1
 ( set -x; repo-gha-prepare ) || exit 1
 
