@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+{ set +x; } 2>/dev/null
+
+remote_main_sha=$(git ls-remote origin refs/heads/main) || exit 1
+remote_main_sha=${remote_main_sha%%[[:space:]]*}
+
+if [ -n "$remote_main_sha" ]; then
+  ( set -x; repo-gha-git-fetch-or-fail ) || exit 1
+fi
+
+( set -x; repo-gha-main-init ) || exit 1
+
+if [ -n "$remote_main_sha" ]; then
+  ( set -x; repo-gha-main-sync ) || exit 1
+fi
+
+local_head_sha=$(git rev-parse HEAD) || exit 1
+if [ "$local_head_sha" != "$remote_main_sha" ]; then
+  ( set -x; git push --no-verify -q -u origin main ) || exit 1
+fi

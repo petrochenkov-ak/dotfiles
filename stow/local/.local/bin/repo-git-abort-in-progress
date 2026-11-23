@@ -2,43 +2,28 @@
 set -euo pipefail
 { set +x; } 2>/dev/null
 
-remote_main_sha=$(git ls-remote origin refs/heads/main | awk '{print $1}')
+git_dir=$(git rev-parse --git-dir) || exit 1
 
-if [ -n "$remote_main_sha" ]; then
-  ( set -x; repo-gha-git-fetch-or-fail ) || exit 1
-fi
-
-has_local_head=0
-git rev-parse --verify HEAD >/dev/null 2>&1 && has_local_head=1
-
-has_local_files=0
-if [ "$has_local_head" -eq 1 ] && [ -n "$(git ls-tree -r HEAD)" ]; then
-  has_local_files=1
-fi
-
-if [ "$has_local_files" -eq 0 ]; then
-  if [ -n "$remote_main_sha" ]; then
-    ( set -x; git reset -q --soft origin/main ) || exit 1
-  fi
-
-  ( set -x; git add -A ) || exit 1
-
-  if ! git diff --cached --quiet; then
-    ( set -x; git commit --no-verify -q -m "chore: initial commit" ) || exit 1
-  elif ! git rev-parse --verify HEAD >/dev/null 2>&1; then
-    ( set -x; git commit --no-verify -q --allow-empty -m "chore: initial commit" ) || exit 1
+if [ -d "$git_dir/rebase-merge" ] || [ -d "$git_dir/rebase-apply" ]; then
+  if [ -f "$git_dir/rebase-apply/applying" ]; then
+    ( set -x; git am --abort ) || ( set -x; rm -rf "$git_dir/rebase-apply" && git reset -q --merge ) || exit 1
+  else
+    ( set -x; git rebase -q --abort ) || ( set -x; rm -rf "$git_dir/rebase-merge" "$git_dir/rebase-apply" && git reset -q --merge ) || exit 1
   fi
 fi
 
-local_head_sha=$(git rev-parse HEAD)
-
-if [ -n "$remote_main_sha" ] && [ "$local_head_sha" != "$remote_main_sha" ]; then
-  if ! git merge-base --is-ancestor "$remote_main_sha" "$local_head_sha" 2>/dev/null; then
-    ( set -x; git reset -q --hard origin/main ) || exit 1
-    local_head_sha=$(git rev-parse HEAD)
-  fi
+if [ -f "$git_dir/MERGE_HEAD" ]; then
+  ( set -x; git merge -q --abort ) || ( set -x; rm -f "$git_dir/MERGE_HEAD" "$git_dir/MERGE_MSG" "$git_dir/MERGE_MODE" && git reset -q --merge ) || exit 1
 fi
 
-if [ "$local_head_sha" != "$remote_main_sha" ]; then
-  ( set -x; git push --no-verify -q -u origin main ) || exit 1
+if [ -f "$git_dir/CHERRY_PICK_HEAD" ]; then
+  ( set -x; git cherry-pick -q --abort ) || ( set -x; rm -f "$git_dir/CHERRY_PICK_HEAD" && git reset -q --merge ) || exit 1
+fi
+
+if [ -f "$git_dir/REVERT_HEAD" ]; then
+  ( set -x; git revert -q --abort ) || ( set -x; rm -f "$git_dir/REVERT_HEAD" && git reset -q --merge ) || exit 1
+fi
+
+if [ -f "$git_dir/BISECT_LOG" ]; then
+  ( set -x; git bisect reset ) || ( set -x; rm -f "$git_dir/BISECT_LOG" "$git_dir/BISECT_NAMES" "$git_dir/BISECT_START" "$git_dir/BISECT_TERMS" ) || exit 1
 fi

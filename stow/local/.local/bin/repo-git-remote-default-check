@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+default_branch="main"
+
+( set -x; repo-git-dir-check ) || exit 1
+
+if ! git show-ref --verify --quiet "refs/remotes/origin/$default_branch"; then
+  printf 'Error: remote branch "origin/%s" does not exist.\n' "$default_branch" >&2
+  exit 1
+fi;:

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+( set -x; repo-git-dir-check ) || exit 1
+
+git_dir=$(git rev-parse --git-dir) || exit 1
+
+for state_file in MERGE_HEAD REBASE_HEAD CHERRY_PICK_HEAD REVERT_HEAD BISECT_LOG; do
+  if [ -e "$git_dir/$state_file" ]; then
+    printf 'Error: unfinished git operation detected (%s). Resolve or abort it manually.\n' "$state_file" >&2
+    exit 1
+  fi
+done
