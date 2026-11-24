@@ -9,15 +9,17 @@ fi
 
 ( set -x; repo-gh-git-remote-set ) || exit 1
 
-repo_full_name=$(repo-gh-full-name) || exit 1
-if ! ( set -x; gh repo view "$repo_full_name" ) >/dev/null 2>&1; then
-  ( set -x; repo-gh-create ) || exit 1
+if ! remote_refs=$(git ls-remote origin 2>/dev/null); then
+  repo_full_name=$(repo-gh-full-name) || exit 1
+  if ! ( set -x; gh repo view "$repo_full_name" ) >/dev/null 2>&1; then
+    ( set -x; repo-gh-create ) || exit 1
+  fi
+  remote_refs=$(git ls-remote origin) || exit 1
 fi
 
 if ! git rev-parse --verify HEAD >/dev/null 2>&1; then
-  ls_remote=$(git ls-remote origin refs/heads/main) || exit 1
-  if [ -n "$ls_remote" ]; then
+  if printf '%s\n' "$remote_refs" | grep -q '[[:space:]]refs/heads/main$'; then
     ( set -x; repo-gha-remote-conflict-warn )
     exit 1
   fi
-fi;:
+fi

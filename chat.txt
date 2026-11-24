@@ -1,15 +1,175 @@
-[core]
-    excludesfile = ~/.config/git/ignore
-    filemode = false
-    bare = false
-    preloadindex = true
-    hooksPath = ~/.config/git/hooks
-
-[init]
-    defaultBranch = main
-    templatedir = ~/.config/git/templates
+repo-git-branch-cleanup:
 ---
-в шаблонах есть hooks - ~/.config/git/templates/hooks
-ееще есть hooksPath = ~/.config/git/hooks
+#!/usr/bin/env bash
+set -euo pipefail
+{ set +x; } 2>/dev/null
 
-так что же определяет где git hooks?
+topic_branch_list=$(set -x; repo-git-topic-branch-list) || exit 1
+if [ -z "$topic_branch_list" ]; then
+  exit 0
+fi
+
+( set -x; git fetch -q --prune origin ) || exit 1
+
+if git rev-parse --verify HEAD >/dev/null 2>&1; then
+  ( set -x; git reset -q --hard ) || exit 1
+fi
+( set -x; git clean -q -fd ) || exit 1
+
+if git rev-parse --verify origin/main >/dev/null 2>&1; then
+  ( set -x; git checkout -q -B main origin/main ) || exit 1
+  ( set -x; git reset -q --hard origin/main ) || exit 1
+else
+  ( set -x; git checkout -q -B main ) || exit 1
+fi
+
+open_pr_list=$(gh pr list --state open --json headRefName -q '.[].headRefName') || exit 1
+local_branch_list=$(git for-each-ref --format='%(refname:short)' refs/heads/ | { grep -vE '^(main|master)$' || [ $? -eq 1 ]; }) || exit 1
+remote_ref_list=$(git for-each-ref --format='%(refname:short)' refs/remotes/origin/ | { grep -vE '^origin(/(HEAD|main|master))?$' || [ $? -eq 1 ]; }) || exit 1
+
+while IFS= read -r branch; do
+  [ -z "$branch" ] && continue
+  if ! grep -qx "$branch" <<< "$open_pr_list"; then
+    ( set -x; git branch -q -D "$branch" ) || exit 1
+  fi
+done <<< "$local_branch_list"
+
+while IFS= read -r remote_ref; do
+  [ -z "$remote_ref" ] && continue
+  branch="${remote_ref#origin/}"
+  [ "$branch" = "$remote_ref" ] && continue
+  if ! grep -qx "$branch" <<< "$open_pr_list"; then
+    ( set -x; git push -q origin --delete "$branch" ) || exit 1
+  fi
+done <<< "$remote_ref_list"
+--
+repo-git-topic-branch-list:
+---
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+set -euo pipefail
+
+refs=("$@")
+if [ ${#refs[@]} -eq 0 ]; then
+  refs=(refs/heads/ refs/remotes/origin/)
+fi
+
+git for-each-ref --format='%(refname:short)' \
+  --exclude='refs/{heads,remotes/origin}/{main,master}' \
+  --exclude='refs/remotes/origin/HEAD' \
+  "${refs[@]}"
+---
+repo-gha-git-clone:
+---
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+if [ $# -lt 1 ]; then
+  printf 'Usage: repo-git-clone-shallow TARGET_DIR\n' >&2
+  exit 1
+fi
+
+TARGET_DIR="$1"
+BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || exit 1
+ORIGIN_URL=$(git remote get-url origin 2>/dev/null) || exit 1
+
+(
+  set -x
+  git -c core.hooksPath=/dev/null clone -q --depth=1 --no-single-branch --branch "$BRANCH_NAME" "$ORIGIN_URL" "$TARGET_DIR"
+) || exit 1
+---
+repo-gha-docker-env-mktemp:
+---
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [ $# -lt 1 ]; then
+  printf 'Usage: repo-gha-env-mktemp GITHUB_REPOSITORY\n' >&2
+  exit 1
+fi
+
+GITHUB_REPOSITORY="$1"
+GITHUB_WORKSPACE="/github/workspace"
+GH_PROTO="https://"
+GH_HOST="github.com"
+
+COMMIT_SHA=$(git rev-parse HEAD 2>/dev/null) || {
+  printf 'Error: not inside a git repository\n' >&2
+  exit 1
+}
+
+BRANCH_NAME=$(set -x; git rev-parse --abbrev-ref HEAD 2>/dev/null) || exit 1
+GITHUB_RUN_ID=$(date +%s) || exit 1
+GH_TOKEN_VAL=$(set -x; gh auth token) || exit 1
+ENV_FILE=$(mktemp "$TMPDIR/repo-gha-env.XXXXXX") || exit 1
+
+cleanup_on_error() {
+  rm -f "$ENV_FILE"
+}
+trap cleanup_on_error ERR
+
+{
+  printf 'DOCKER_SOCK=/var/run/docker.sock\n'
+  printf 'GITHUB_ACTIONS=true\n'
+  printf 'GITHUB_WORKSPACE=%s\n' "$GITHUB_WORKSPACE"
+  printf 'GITHUB_RUN_ID=%s\n' "$GITHUB_RUN_ID"
+  printf 'GITHUB_SHA=%s\n' "$COMMIT_SHA"
+  printf 'GITHUB_REF=refs/heads/%s\n' "$BRANCH_NAME"
+  printf 'GITHUB_REPOSITORY=%s\n' "$GITHUB_REPOSITORY"
+  printf 'SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock\n'
+  printf 'GITHUB_TOKEN=%s\n' "$GH_TOKEN_VAL"
+  printf 'GH_TOKEN=%s\n' "$GH_TOKEN_VAL"
+
+  # Переносим все переменные с префиксом GHA_
+  for var in $(compgen -e GHA_ || true); do
+    val="${!var}"
+    if [[ "$val" == *$'\n'* ]]; then
+      printf 'Warning: skipping %s (multiline values are not supported by --env-file)\n' "$var" >&2
+      continue
+    fi
+    printf '%s=%s\n' "$var" "$val"
+  done
+} > "$ENV_FILE"
+
+trap - ERR
+printf '%s\n' "$ENV_FILE"
+---
+git-repos-gha-docker-run:
+---
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+if [ $# -lt 1 ]; then
+  printf 'Usage: repo-gha-docker-run IMAGE [ARGS...]\n' >&2
+  exit 1
+fi
+
+image_name="$1"
+image="registry.docker.internal:5000/$image_name"
+shift
+
+( set -x; docker-vm-start ) || exit 1
+( set -x; repo-git-dir-check ) || exit 1
+( set -x; repo-gha-prepare ) || exit 1
+
+repo_full_name=$(repo-gh-full-name) || exit 1
+work_tmp=$(set -x; repo-mktemp "$image_name") || exit 1
+env_file=$(set -x; repo-gha-docker-env-mktemp "$repo_full_name") || exit 1
+
+cleanup() {
+  rm -rf "$work_tmp" "$env_file"
+}
+trap cleanup EXIT
+
+( set -x; repo-gha-git-clone "$work_tmp" ) || exit 1
+
+raw_opts=$(set -x; cd "$work_tmp" && repo-gha-docker-opts "$env_file") || exit 1
+IFS=$'\n' read -r -d '' -a docker_opts <<< "$raw_opts"
+
+( set -x; docker run --rm "${docker_opts[@]}" "$image" "$@" ) || exit 1
+( set -x; repo-gha-git-fetch-or-fail ) || exit 1
+( set -x; git reset -q --hard origin/main ) || exit 1
+echo 'finished'
+#( set -x; repo-git-branch-cleanup ) || exit 1
+#( set -x; repo-git-pull-default ) || exit 1
+

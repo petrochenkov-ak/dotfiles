@@ -8,6 +8,9 @@ if [ ${#refs[@]} -eq 0 ]; then
 fi
 
 git for-each-ref --format='%(refname:short)' \
-  --exclude='refs/{heads,remotes/origin}/{main,master}' \
+  --exclude='refs/heads/main' \
+  --exclude='refs/heads/master' \
+  --exclude='refs/remotes/origin/main' \
+  --exclude='refs/remotes/origin/master' \
   --exclude='refs/remotes/origin/HEAD' \
   "${refs[@]}"
