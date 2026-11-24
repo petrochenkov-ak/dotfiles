@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+{ set +x; } 2>/dev/null
+
+remote_main_sha=$(git ls-remote origin refs/heads/main) || exit 1
+remote_main_sha=${remote_main_sha%%[[:space:]]*}
+
+if [ -n "$remote_main_sha" ]; then
+  ( set -x; repo-gha-git-fetch-or-fail ) || exit 1
+fi
+
+status=$(git status --porcelain) || exit 1
+ahead=""
+if [ -n "$remote_main_sha" ] && git rev-parse --verify HEAD >/dev/null 2>&1; then
+  ahead=$(git log origin/main..HEAD --oneline 2>/dev/null || true)
+fi
+
+if [ -n "$status" ] || [ -n "$ahead" ]; then
+  ( set -x; repo-git-checkout-ai-branch ) || exit 1
+  if [ -n "$status" ]; then
+    ( set -x; repo-git-commit ) || exit 1
+  fi
+  if [ -n "$remote_main_sha" ]; then
+    ( set -x; git rebase -q origin/main ) || exit 1
+  fi
+  ( set -x; repo-git-push ) || exit 1
+  ( set -x; repo-gh-pr-sync ) || exit 1
+  ( set -x; repo-gh-pr-cleanup ) || exit 1
+fi;:

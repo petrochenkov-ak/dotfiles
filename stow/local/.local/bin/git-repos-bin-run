@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+if [ $# -lt 1 ]; then
+  echo "Usage: $(basename "${BASH_SOURCE}") <command> [args...]" >&2
+  exit 1
+fi
+
+GIT_ROOT="$(cd "$HOME/git" 2>/dev/null && pwd -P)"
+CURRENT_DIR="$(pwd -P)"
+
+if [ -z "$GIT_ROOT" ]; then
+  echo "Error: Directory '$HOME/git' does not exist" >&2
+  exit 1
+fi
+
+if [ "$CURRENT_DIR" = "$GIT_ROOT/.scripts" ]; then
+  SEARCH_ROOT="$GIT_ROOT"
+  DEPTH=2
+elif [[ "$CURRENT_DIR" =~ ^"$GIT_ROOT"/([^/]+)/\.scripts$ ]]; then
+  OWNER="${BASH_REMATCH[1]}"
+  SEARCH_ROOT="$GIT_ROOT/$OWNER"
+  DEPTH=1
+else
+  echo "Error: Must be run from '$GIT_ROOT/.scripts' or '$GIT_ROOT/<owner>/.scripts'" >&2
+  exit 1
+fi
+
+TARGETS=()
+while IFS= read -r -d '' dir; do
+  TARGETS+=("$dir")
+done < <(find "$SEARCH_ROOT" -mindepth "$DEPTH" -maxdepth "$DEPTH" -type d -not -path '*/.*' -print0 | sort -z)
+
+for dir in "${TARGETS[@]}"; do
+  if [ -n "${REPO_CHECK:-}" ]; then
+    ( cd "$dir" && eval "$REPO_CHECK" ) || continue
+  fi
+  ( set -x; cd "$dir" && "$@" ) || {
+    echo "Error: '$*' failed in '$dir' (exit code: $?)" >&2
+    ( set -x; terminal-bell ) || exit 1
+    exit 1
+  }
+done

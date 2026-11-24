@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 1 ]] && echo "usage: ${0##*/} path" && exit 1
+
+( set -x; prompt-env-check ) || exit
+
+export AIDER_CHECK_UPDATE=false
+export MARKER_OUTPUT_FILE="${1%.md}_answer.md"
+export STDERR_FILE="${1%/*}/stderr.log"
+export FILELIST="${1%/*}/input.filelist"
+
+READ_ARGS=()
+if [ -f "${FILELIST}" ]; then
+  mapfile -t FILE_ARGS < <(sed '/^$/q' "${FILELIST}" | grep -v '^$')
+  for file in "${FILE_ARGS[@]}"; do
+    READ_ARGS+=(--read "$file")
+  done
+fi
+
+echo "+ prompt-build $1" && prompt-build "$1" &> /dev/null || exit
+( set -x; nohup aider \
+  --chat-mode ask \
+  --model "openai/${LLM_MODEL}" \
+  --light-mode \
+  --map-tokens 0 \
+  --no-analytics \
+  --no-auto-commits \
+  --no-dry-run \
+  --no-notifications \
+  --no-pretty \
+  --no-stream \
+  --weak-model none \
+  --edit-format whole \
+  "${READ_ARGS[@]}" \
+  --message-file "$1" </dev/null ) > "${MARKER_OUTPUT_FILE}" 2> "${STDERR_FILE}" || exit
+prompt-aider-clean "$1" || exit
+( set -x; cat "${MARKER_OUTPUT_FILE}" )

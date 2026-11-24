@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 2 ]] && echo "usage: ${0##*/} prompt_file output_file" && exit 1
+
+# ( set -x; prompt-goose-ask "$1"  "$2" )
+[ -e "${1%/*}"/.read.filelist ] && {
+    ( set -x; cat "${1%/*}"/.read.filelist | files-to-prompt -c | aichat -m "openai:${LLM_MODEL}" -f "$1" > /tmp/$$.md ) || exit
+} || {
+    ( set -x; aichat -m "openai:${LLM_MODEL}" -f "$1" > /tmp/$$.md ) || exit
+}
+cat /tmp/$$.md > "$2" || exit
+( set -x; cat "$2" )

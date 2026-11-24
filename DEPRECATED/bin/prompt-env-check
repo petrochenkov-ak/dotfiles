@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[ -z "${LLM_MODEL}" ] && echo "ERROR: LLM_MODEL must be defined" && exit 1
+[ -z "${OPENAI_API_BASE}" ] && echo "ERROR: OPENAI_API_BASE must be defined" && exit 1
+exit 0

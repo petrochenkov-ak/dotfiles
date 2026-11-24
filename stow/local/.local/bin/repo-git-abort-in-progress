@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+{ set +x; } 2>/dev/null
+
+git_dir=$(git rev-parse --git-dir) || exit 1
+
+if [ -d "$git_dir/rebase-merge" ] || [ -d "$git_dir/rebase-apply" ]; then
+  if [ -f "$git_dir/rebase-apply/applying" ]; then
+    ( set -x; git am --abort ) || ( set -x; rm -rf "$git_dir/rebase-apply" && git reset -q --merge ) || exit 1
+  else
+    ( set -x; git rebase -q --abort ) || ( set -x; rm -rf "$git_dir/rebase-merge" "$git_dir/rebase-apply" && git reset -q --merge ) || exit 1
+  fi
+fi
+
+if [ -f "$git_dir/MERGE_HEAD" ]; then
+  ( set -x; git merge -q --abort ) || ( set -x; rm -f "$git_dir/MERGE_HEAD" "$git_dir/MERGE_MSG" "$git_dir/MERGE_MODE" && git reset -q --merge ) || exit 1
+fi
+
+if [ -f "$git_dir/CHERRY_PICK_HEAD" ]; then
+  ( set -x; git cherry-pick -q --abort ) || ( set -x; rm -f "$git_dir/CHERRY_PICK_HEAD" && git reset -q --merge ) || exit 1
+fi
+
+if [ -f "$git_dir/REVERT_HEAD" ]; then
+  ( set -x; git revert -q --abort ) || ( set -x; rm -f "$git_dir/REVERT_HEAD" && git reset -q --merge ) || exit 1
+fi
+
+if [ -f "$git_dir/BISECT_LOG" ]; then
+  ( set -x; git bisect reset ) || ( set -x; rm -f "$git_dir/BISECT_LOG" "$git_dir/BISECT_NAMES" "$git_dir/BISECT_START" "$git_dir/BISECT_TERMS" ) || exit 1
+fi

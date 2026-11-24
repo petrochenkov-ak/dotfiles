@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+MAX_AGE_HOURS=24
+MAX_AGE_SECONDS=$((MAX_AGE_HOURS * 3600))
+CURRENT_TIME=$(date +%s)
+
+REPO_OWNER=$(set -x; retry -u success -- gh repo view --json owner --jq '.owner.login' 2>/dev/null) || exit 1
+
+( set -x; git fetch --prune --all -q ) || exit 1
+( set -x; git checkout main -q ) || exit 1
+
+git branch -r --format='%(refname:short)' | while read -r remote_branch; do
+    [ -z "$remote_branch" ] && continue
+    if [[ "$remote_branch" == "origin/main" || "$remote_branch" == "origin/HEAD" || "$remote_branch" == *"->"* ]]; then
+        continue
+    fi
+
+    BRANCH_NAME=${remote_branch#origin/}
+    HEAD_FILTER="${REPO_OWNER}:${BRANCH_NAME}"
+    OPEN_PRS=$(set -x; retry -u success -- gh pr list --head "$HEAD_FILTER" --state open --json number --jq '.[].number' 2>/dev/null) || exit 1
+
+    if [[ -z "$OPEN_PRS" || "$OPEN_PRS" == "null" ]]; then
+        COMMIT_TIME=$(git log -1 --format=%ct "origin/$BRANCH_NAME" 2>/dev/null)
+
+        if [ -z "$COMMIT_TIME" ]; then
+            echo "Предупреждение: Не удалось получить время коммита для origin/$BRANCH_NAME"
+            continue
+        fi
+
+        AGE=$((CURRENT_TIME - COMMIT_TIME))
+
+        if [ "$AGE" -lt "$MAX_AGE_SECONDS" ]; then
+            continue
+        fi
+        ( set -x; git push origin --delete "$BRANCH_NAME" 2>/dev/null ) || true
+
+        if git show-ref --verify --quiet "refs/heads/$BRANCH_NAME"; then
+            ( set -x; git branch -D "$BRANCH_NAME" 2>/dev/null ) || true
+        fi
+    fi
+done
+
+git branch --format='%(refname:short)' | while read -r local_branch; do
+    [ -z "$local_branch" ] && continue
+    [ "$local_branch" == "main" ] && continue
+
+    if ! git show-ref --verify --quiet "refs/remotes/origin/$local_branch"; then
+        ( set -x; git branch -D "$local_branch" 2>/dev/null ) || true
+    fi
+done

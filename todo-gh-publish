@@ -1,0 +1,3 @@
+не закрывать, а ждать завершения всех actions и потом принимать решение
+1) success - pull
+2) failed - browse, создание ai issue

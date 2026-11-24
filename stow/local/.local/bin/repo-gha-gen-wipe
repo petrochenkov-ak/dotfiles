@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+if [ -e ".git" ]; then
+  printf 'Error: %s is a git repository (.git exists)\n' "$PWD" >&2
+  exit 1
+fi
+
+(
+  set -x
+  find . -type f \( \
+    -name 'docker-bake.json' -o \
+    -path './.github/workflows/*' \
+  \) -delete
+  find . -type d -empty -delete
+) || exit 1

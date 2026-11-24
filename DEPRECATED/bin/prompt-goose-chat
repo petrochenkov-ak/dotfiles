@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+[[ $# != 2 ]] && echo "usage: ${0##*/} prompt_file output_file" && exit 1
+
+( set -x; prompt-prepare ) || exit
+( set -x; prompt-goose-run-edit "$1" "$2" ) || exit
+( set -x; prompt-goose-clean "$2" ) || exit
+( set -x; cat "$2" )

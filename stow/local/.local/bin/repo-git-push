@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+( set -x; repo-git-dir-check ) || exit 1
+( set -x; repo-git-push-check ) || exit 1
+
+current_branch=$(git symbolic-ref --short HEAD) || exit 1
+( set -x; git push -q -u origin "$current_branch" ) || exit 1

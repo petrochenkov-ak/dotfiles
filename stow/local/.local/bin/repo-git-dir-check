@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+git_root=$(cd "$HOME/git" 2>/dev/null && pwd -P) || exit 1
+nested_git=$(find "$PWD" -mindepth 2 -name ".git" -prune 2>/dev/null) || exit 1
+
+if [[ -z "$git_root" || ! "$PWD" =~ ^"$git_root"/[^/]+/[^/]+$ ]]; then
+  echo "Error: must be run strictly inside ~/git/owner/repo (current: $PWD)" >&2
+  exit 1
+fi
+
+if [[ -n "$nested_git" ]]; then
+  echo "Error: nested .git found: $nested_git" >&2
+  exit 1
+fi

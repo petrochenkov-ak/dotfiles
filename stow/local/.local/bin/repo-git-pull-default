@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+stash_marker="repo-git-pull-default:auto-stash"
+
+( set -x; repo-git-state-check ) || exit 1
+( set -x; repo-git-stash-safe push "$stash_marker" ) || exit 1
+( set -x; git fetch -q --prune origin ) || exit 1
+( set -x; repo-git-remote-default-check ) || exit 1
+( set -x; repo-git-checkout-default ) || exit 1
+( set -x; repo-git-merge-ff-default ) || exit 1
+( set -x; repo-git-stash-safe pop "$stash_marker" ) || exit 1

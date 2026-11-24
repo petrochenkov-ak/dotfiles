@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SSH_HOSTS=("registry.docker.internal" "gha-runner")
+
+( set -x; docker-registry-orphan-clean ) || exit 1
+( set -x; docker-host-local-orphan-clean ) || exit 1
+
+for ssh_host in "${SSH_HOSTS[@]}"; do
+  ( set -x;l docker-host-ssh-orphan-clean "$ssh_host" ) || exit 1
+done

@@ -1,0 +1,2 @@
+chore(xxx): [skip ci] xxx
+[skip ci] вначале ты визуально проще?

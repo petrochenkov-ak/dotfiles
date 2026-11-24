@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+{ set +x; } 2>/dev/null
+
+status=$(git status --porcelain) || exit 1
+[ -z "$status" ] && exit 0
+
+if git rev-parse --verify HEAD >/dev/null 2>&1; then
+  ( set -x; git reset -q --hard ) || exit 1
+fi
+( set -x; git clean -q -fd ) || exit 1

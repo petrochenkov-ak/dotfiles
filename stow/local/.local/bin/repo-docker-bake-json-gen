@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BIN_DIR="$HOME/git/petrochenkov-ak-gha/docker-bake-json-gen-gha/docker/images/docker-bake-json-gen-gha/rootfs/usr/local/bin"
+
+export PATH="$BIN_DIR:$PATH"
+
+( set -x; find "$BIN_DIR" -maxdepth 1 -type f -exec chmod +x {} + ) || exit 1
+( set -x; bake-json-gen.sh ) || exit 1

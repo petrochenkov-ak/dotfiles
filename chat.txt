@@ -1,0 +1,15 @@
+[core]
+    excludesfile = ~/.config/git/ignore
+    filemode = false
+    bare = false
+    preloadindex = true
+    hooksPath = ~/.config/git/hooks
+
+[init]
+    defaultBranch = main
+    templatedir = ~/.config/git/templates
+---
+в шаблонах есть hooks - ~/.config/git/templates/hooks
+ееще есть hooksPath = ~/.config/git/hooks
+
+так что же определяет где git hooks?

@@ -1,0 +1,79 @@
+%YAML 1.2
+---
+name: jq
+file_extensions:
+  - jq
+scope: source.jq
+
+contexts:
+  main:
+    - include: comments
+    - include: strings
+    - include: numbers
+    - include: keywords
+    - include: builtins
+    - include: variables
+    - include: fields
+    - include: operators
+    - include: punctuation
+
+  comments:
+    - match: '#.*$'
+      scope: comment.line.number-sign.jq
+
+  strings:
+    - match: '"'
+      scope: punctuation.definition.string.begin.jq
+      push:
+        - meta_scope: string.quoted.double.jq
+        - match: '"'
+          scope: punctuation.definition.string.end.jq
+          pop: true
+        - match: '\\\('
+          scope: punctuation.section.interpolation.begin.jq
+          push:
+            - meta_scope: meta.interpolation.jq
+            - match: '\)'
+              scope: punctuation.section.interpolation.end.jq
+              pop: true
+            - include: main
+        - match: '\\.'
+          scope: constant.character.escape.jq
+
+  numbers:
+    - match: '\b-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?\b'
+      scope: constant.numeric.jq
+
+  keywords:
+    - match: '\b(def|if|then|elif|else|end|as|try|catch|reduce|foreach|import|include|module|label|break)\b'
+      scope: keyword.control.jq
+    - match: '\b(and|or|not)\b'
+      scope: keyword.operator.logical.jq
+    - match: '\b(true|false|null)\b'
+      scope: constant.language.jq
+
+  builtins:
+    - match: '\b(empty|error|halt|halt_error|length|utf8bytelength|keys|keys_unsorted|has|in|map|map_values|path|del|getpath|setpath|delpaths|to_entries|from_entries|with_entries|select|arrays|objects|iterables|booleans|numbers|normals|finites|strings|nulls|values|scalars|type|infinite|nan|isinfinite|isnan|isfinite|isnormal|sort|sort_by|group_by|min|max|min_by|max_by|unique|unique_by|reverse|contains|indices|index|rindex|inside|startswith|endswith|combinations|ltrimstr|rtrimstr|explode|implode|split|join|ascii_downcase|ascii_upcase|while|until|recurse|recurse_down|walk|transpose|bsearch|tostring|tonumber|floor|ceil|round|sqrt|cbrt|abs|fabs|sin|cos|tan|asin|acos|atan|atan2|sinh|cosh|tanh|asinh|acosh|atanh|exp|exp2|exp10|log|log2|log10|pow|fma|now|gmtime|localtime|mktime|strftime|strptime|strflocaltime|todate|fromdate|todateiso8601|fromdateiso8601|env|debug|stderr|input|inputs|builtins|ascii|format|range|limit|first|last|nth|any|all|flatten|leaf_paths|paths)\b'
+      scope: support.function.builtin.jq
+    - match: '@(text|json|html|uri|csv|tsv|sh|base64|base64d)\b'
+      scope: support.function.format.jq
+
+  variables:
+    - match: '\$[a-zA-Z_][a-zA-Z0-9_]*'
+      scope: variable.other.jq
+
+  fields:
+    - match: '\.\.[a-zA-Z0-9_]*'
+      scope: keyword.operator.recursive.jq
+    - match: '\.[a-zA-Z_][a-zA-Z0-9_]*\??'
+      scope: variable.other.member.jq
+    - match: '\.(?![a-zA-Z0-9_])'
+      scope: keyword.operator.identity.jq
+
+  operators:
+    - match: '(\|=|\+=|-=|\*=|/=|%=|//=|==|!=|<=|>=|<|>|\+|-|\*|/|%|//|\||\?//|\?)'
+      scope: keyword.operator.jq
+
+  punctuation:
+    - match: '[\[\]\{\}\(\),;:]'
+      scope: punctuation.jq

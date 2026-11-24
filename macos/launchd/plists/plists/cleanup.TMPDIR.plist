@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://apple.com">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>cleanup.TMPDIR</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/sh</string>
+        <string>-c</string>
+        <string>for i in {1..30}; do if [ -d "/Volumes/ssd-external/tmp" ]; then rm -rf /Volumes/ssd-external/tmp/* /Volumes/ssd-external/tmp/.[!.]* /Volumes/ssd-external/tmp/..?* 2>/dev/null || true; exit 0; fi; sleep 1; done</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+</dict>
+</plist>
