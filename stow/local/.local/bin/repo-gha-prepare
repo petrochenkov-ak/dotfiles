@@ -4,6 +4,7 @@ set -euo pipefail
 
 ( set -x; repo-gha-bootstrap ) || exit 1
 ( set -x; repo-git-abort-in-progress ) || exit 1
-( set -x; repo-gha-local-save ) || exit 1
-( set -x; repo-gha-main-reconcile ) || exit 1
-( set -x; repo-git-branch-cleanup ) || exit 1
+( set -x; repo-gha-git-fetch-or-fail ) || exit 1
+( set -x; repo-gha-local-save-fetched ) || exit 1
+( set -x; repo-gha-main-reconcile-fetched ) || exit 1
+( set -x; repo-git-branch-cleanup-fetched ) || exit 1

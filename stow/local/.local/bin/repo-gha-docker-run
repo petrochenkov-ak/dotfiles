@@ -29,6 +29,8 @@ raw_opts=$(set -x; cd "$work_tmp" && repo-gha-docker-opts "$env_file") || exit 1
 IFS=$'\n' read -r -d '' -a docker_opts <<< "$raw_opts"
 
 ( set -x; docker run --rm "${docker_opts[@]}" "$image" "$@" ) || exit 1
-( set -x; repo-git-branch-cleanup ) || exit 1
-( set -x; repo-git-pull-default ) || exit 1
+( set -x; repo-gha-git-fetch-or-fail ) || exit 1
+( set -x; git reset -q --hard origin/main ) || exit 1
 echo 'finished'
+#( set -x; repo-git-branch-cleanup ) || exit 1
+#( set -x; repo-git-pull-default ) || exit 1
