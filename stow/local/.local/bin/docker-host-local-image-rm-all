@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $# -ne 1 ]]; then
+  echo "Usage: $(basename "$0") <image>" >&2
+  exit 1
+fi
+
+target="$1"
+
+list=$( set -x; docker images --format '{{.Repository}}|{{.Tag}}|{{.Digest}}|{{.ID}}' ) || exit 1
+to_delete=()
+while IFS='|' read -r repo tag digest id; do
+  [[ -z "$repo" ]] && continue
+  name="${repo##*/}"
+
+  if [[ "$name" == "$target" || ( "$repo" == "build-cache" && ( "$tag" == "$target" || "$tag" == "$target"-* ) ) ]]; then
+    if [[ "$tag" != "<none>" ]]; then
+      to_delete+=("${repo}:${tag}")
+    elif [[ "$digest" != "<none>" ]]; then
+      to_delete+=("${repo}@${digest}")
+    else
+      to_delete+=("$id")
+    fi
+  fi
+done <<< "$list"
+
+if [[ ${#to_delete[@]} -gt 0 ]]; then
+  ( set -x; docker image rm -f "${to_delete[@]}" ) || exit 1
+fi

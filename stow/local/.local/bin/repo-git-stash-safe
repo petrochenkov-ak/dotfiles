@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+if [ $# -ne 2 ]; then
+  printf 'Usage: repo-git-stash-safe <push|pop> <marker>\n' >&2
+  exit 1
+fi
+
+action="$1"
+marker="$2"
+
+( set -x; repo-git-dir-check ) || exit 1
+
+find_stash() {
+  git stash list --format='%gd %s' | awk -v m="$marker" 'index($0, m) {print $1; exit}'
+}
+
+case "$action" in
+  push)
+    existing_ref=$(find_stash)
+    if [ -n "$(git status --porcelain)" ]; then
+      if [ -n "$existing_ref" ]; then
+        printf 'Error: unfinished auto-stash (%s) exists and working tree is dirty. Resolve stash manually.\n' "$existing_ref" >&2
+        exit 1
+      fi
+      ( set -x; git stash push -q -u -m "$marker" ) || exit 1
+    fi
+    ;;
+  pop)
+    existing_ref=$(find_stash)
+    if [ -n "$existing_ref" ]; then
+      if ! ( set -x; git stash pop -q "$existing_ref" ); then
+        printf 'Error: failed to restore stashed changes (%s) cleanly. Resolve conflicts manually.\n' "$existing_ref" >&2
+        exit 1
+      fi
+    fi
+    ;;
+  *)
+    printf 'Error: unknown action "%s". Expected "push" or "pop".\n' "$action" >&2
+    exit 1
+    ;;
+esac

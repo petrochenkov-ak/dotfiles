@@ -1,0 +1,16 @@
+name: main-ci.yaml
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  pipeline:
+    runs-on: [self-hosted, linux]
+    steps:
+      - name: actions/checkout
+        uses: actions/checkout@v4
+
+      - name: registry.docker.internal:5000/main-ci-gha
+        uses: docker://registry.docker.internal:5000/main-ci-gha:latest

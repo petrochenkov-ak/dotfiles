@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+{ set +x; } 2>/dev/null
+
+local_head_sha=$(git rev-parse HEAD) || exit 1
+remote_main_sha=$(git rev-parse origin/main) || exit 1
+
+if ! git merge-base "$local_head_sha" "$remote_main_sha" >/dev/null 2>&1; then
+  ( set -x; repo-gha-remote-conflict-warn "local HEAD and origin/main have unrelated histories" ) || exit 1
+  exit 1
+fi
+
+if [ "$local_head_sha" = "$remote_main_sha" ]; then
+  exit 0
+fi
+
+if git merge-base --is-ancestor "$remote_main_sha" "$local_head_sha" 2>/dev/null; then
+  exit 0
+fi
+
+if git merge-base --is-ancestor "$local_head_sha" "$remote_main_sha" 2>/dev/null; then
+  ( set -x; git merge --ff-only -q origin/main ) || exit 1
+  exit 0
+fi
+
+( set -x; repo-gha-remote-conflict-warn "local HEAD and origin/main have diverged" ) || exit 1
+exit 1

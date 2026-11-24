@@ -1,0 +1,11 @@
+{
+    "selector": "source.applescript",
+    "cmd": ["osascript","$file"],
+    "variants":
+    [
+        {
+            "name": "Run",
+            "cmd": ["osascript","$file"]
+        }
+    ]
+}

@@ -1,0 +1,47 @@
+%YAML 1.2
+---
+# See https://sublimetext.com for details
+name: BuildKit Config (TOML)
+file_extensions:
+  - buildkitd.toml
+  - buildkit.toml
+scope: source.toml.buildkit
+
+contexts:
+  main:
+    - include: Packages/TOML/TOML.sublime-syntax
+    - include: Packages/Default/TOML.sublime-syntax
+    - include: buildkit-keywords
+
+  buildkit-keywords:
+    # Root keys
+    - match: '\b(debug|trace|root|insecure-entitlements|proxyNetwork|provenanceEnvDir)\b\s*(?==)'
+      scope: keyword.other.buildkit.root.toml
+
+    # System sections
+    - match: '(?<=\[)(log|grpc|grpc\.tls|otel|cdi|history|compaction|frontend|system)(?=\])'
+      scope: entity.name.section.toml.buildkit.section
+
+    # Worker sections
+    - match: '(?<=\[)worker\.(oci|containerd)(?=\])'
+      scope: entity.name.section.toml.buildkit.worker
+
+    # GC policy arrays
+    - match: '(?<=\[\[)worker\.(oci|containerd)\.gcpolicy(?=\]\])'
+      scope: entity.name.section.toml.buildkit.gcpolicy
+
+    # Registry sections
+    - match: '(?<=\[)registry(\.[^\]]+)?(?=\])'
+      scope: entity.name.section.toml.buildkit.registry
+
+    # Network, GRPC and TLS keys
+    - match: '\b(address|debugAddress|uid|gid|cert|key|ca)\b\s*(?==)'
+      scope: variable.language.buildkit.grpc.toml
+
+    # Worker and GC specific keys
+    - match: '\b(enabled|platforms|snapshotter|rootless|max-parallelism|gc|gckeepstorage|keepBytes|keepDuration|filters|all)\b\s*(?==)'
+      scope: variable.language.buildkit.worker.toml
+
+    # Logging and advanced configuration options
+    - match: '\b(format|level|maxAge|maxEntries|mirrors|http|insecure|ca|keypair|platformsCacheMaxAge|maxRegistryConcurrency|sessionAuthTimeout)\b\s*(?==)'
+      scope: variable.language.buildkit.system.toml

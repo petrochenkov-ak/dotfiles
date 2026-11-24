@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+if [ -z "${COLIMA_HOME}" ]; then
+  echo "ERROR: COLIMA_HOME is not set"
+  exit 1
+fi
+
+if [ -z "${LIMA_HOME}" ]; then
+  echo "ERROR: LIMA_HOME is not set"
+  exit 1
+fi
+
+( set -x; docker context use default || true )
+( set -x; colima stop ) || exit 1
+( set -x; colima status || true )

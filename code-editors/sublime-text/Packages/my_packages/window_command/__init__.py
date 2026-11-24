@@ -1,0 +1,2 @@
+from my_packages.window_command.open_finder_command import OpenFinderCommand
+from my_packages.window_command.open_terminal_command import OpenTerminalCommand

@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -euo pipefail
+{ set +x; } 2>/dev/null
+
+topic_branch_list=$(set -x; repo-git-topic-branch-list) || exit 1
+if [ -z "$topic_branch_list" ]; then
+  exit 0
+fi
+
+( set -x; git fetch -q --prune origin ) || exit 1
+
+if git rev-parse --verify HEAD >/dev/null 2>&1; then
+  ( set -x; git reset -q --hard ) || exit 1
+fi
+( set -x; git clean -q -fd ) || exit 1
+
+if git rev-parse --verify origin/main >/dev/null 2>&1; then
+  ( set -x; git checkout -q -B main origin/main ) || exit 1
+  ( set -x; git reset -q --hard origin/main ) || exit 1
+else
+  ( set -x; git checkout -q -B main ) || exit 1
+fi
+
+open_pr_list=$(gh pr list --state open --json headRefName -q '.[].headRefName') || exit 1
+local_branch_list=$(git for-each-ref --format='%(refname:short)' refs/heads/ | { grep -vE '^(main|master)$' || [ $? -eq 1 ]; }) || exit 1
+remote_ref_list=$(git for-each-ref --format='%(refname:short)' refs/remotes/origin/ | { grep -vE '^origin(/(HEAD|main|master))?$' || [ $? -eq 1 ]; }) || exit 1
+
+while IFS= read -r branch; do
+  [ -z "$branch" ] && continue
+  if ! grep -qx "$branch" <<< "$open_pr_list"; then
+    ( set -x; git branch -q -D "$branch" ) || exit 1
+  fi
+done <<< "$local_branch_list"
+
+while IFS= read -r remote_ref; do
+  [ -z "$remote_ref" ] && continue
+  branch="${remote_ref#origin/}"
+  [ "$branch" = "$remote_ref" ] && continue
+  if ! grep -qx "$branch" <<< "$open_pr_list"; then
+    ( set -x; git push -q origin --delete "$branch" ) || exit 1
+  fi
+done <<< "$remote_ref_list"

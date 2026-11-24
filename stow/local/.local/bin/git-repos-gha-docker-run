@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+usage() {
+  echo "Usage: $(basename "${BASH_SOURCE}") <image_name> [-- <command> [args...]]" >&2
+  exit 1
+}
+
+[[ $# -lt 1 ]] && usage
+
+IMAGE_NAME="$1"
+shift
+
+CHECK_CMD=()
+if [[ $# -gt 0 ]]; then
+  if [[ "$1" == "--" ]]; then
+    shift
+    [[ $# -eq 0 ]] && { echo "Error: Missing command after '--'" >&2; usage; }
+    CHECK_CMD=("$@")
+  else
+    echo "Error: Unexpected argument '$1'" >&2
+    usage
+  fi
+fi
+
+if [[ "$PWD" != */git && "$PWD" != */git/* ]]; then
+  echo "Error: Current directory '$PWD' must be inside */git/*" >&2
+  exit 1
+fi
+
+GIT_ROOT="${PWD%%/git/*}/git"
+AFTER_GIT="${PWD#*/git/}"
+FIRST_SEGMENT="${AFTER_GIT%%/*}"
+
+if [[ "$PWD" == "$GIT_ROOT" || "$FIRST_SEGMENT" == ".scripts" ]]; then
+  SEARCH_ROOT="$GIT_ROOT"
+  DEPTH=2
+else
+  SEARCH_ROOT="${GIT_ROOT}/${FIRST_SEGMENT}"
+  DEPTH=1
+fi
+
+( set -x; docker-vm-start ) || exit 1
+( set -x; gh-ssh-check ) || exit 1
+TAG=$(set -x; docker-image-default-tag "$IMAGE_NAME") || exit 1
+IMAGE="${IMAGE_NAME%%:*}:${TAG}"
+
+TARGETS=()
+while IFS= read -r -d '' dir; do
+  TARGETS+=("$dir")
+done < <(find "$SEARCH_ROOT" -mindepth "$DEPTH" -maxdepth "$DEPTH" -type d -not -name '.*' -print0 | sort -z)
+
+for dir in "${TARGETS[@]}"; do
+  if [[ ${#CHECK_CMD[@]} -gt 0 ]]; then
+    ( cd "$dir" && "${CHECK_CMD[@]}" ) || continue
+  fi
+
+  ( set -x; cd "$dir" && repo-gha-docker-run "$IMAGE" ) || {
+    echo "Error: repo-gha-docker-run '$IMAGE' failed in '$dir' (exit code: $?)" >&2
+    ( set -x; terminal-bell ) || exit 1
+    exit 1
+  }
+done

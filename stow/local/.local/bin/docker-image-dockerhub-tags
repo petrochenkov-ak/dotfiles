@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $# -ne 1 ]]; then
+  echo "Usage: $(basename "$0") <image>" >&2
+  exit 1
+fi
+
+image="$1"
+
+hubs=(
+  "mirror.gcr.io"
+  "dockerhub.timeweb.cloud"
+  "huecker.io"
+  "docker.io"
+)
+
+first_part="${image%%/*}"
+has_domain=false
+if [[ "$image" == */* && ( "$first_part" == *.* || "$first_part" == *:* || "$first_part" == "localhost" ) ]]; then
+  has_domain=true
+fi
+
+candidates=()
+if [[ "$has_domain" == true ]]; then
+  candidates+=("$image")
+else
+  for hub in "${hubs[@]}"; do
+    candidates+=("${hub}/${image}")
+  done
+fi
+
+for candidate in "${candidates[@]}"; do
+  set +e
+  out=$( set -x; crane ls "$candidate" 2>&1 )
+  rc=$?
+  set -e
+
+  if [[ $rc -eq 0 ]]; then
+    echo "$out"
+    exit 0
+  fi
+
+  if [[ "$out" != *"NAME_UNKNOWN"* && "$out" != *"MANIFEST_UNKNOWN"* && "$out" != *"DENIED"* && "$out" != *"UNAUTHORIZED"* && "$out" != *"UNSUPPORTED"* ]]; then
+    echo "Error querying $candidate: $out" >&2
+    exit 1
+  fi
+done
+
+exit 0

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+FULL_NAME=$(repo-gh-full-name) || exit 1
+
+if ! ( set -x; gh repo view "${FULL_NAME}" ) >/dev/null 2>&1; then
+    ( set -x; gh repo create "${FULL_NAME}" --private ) || exit 1
+fi;:

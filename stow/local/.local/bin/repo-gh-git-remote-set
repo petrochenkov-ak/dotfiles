@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+# ~/git/{full_name}
+full_name=$(pwd | awk -F'/git/' '{print $2}' | cut -d'/' -f1,2) || exit 1
+url="git@github.com:${full_name}.git"
+
+if git remote get-url origin >/dev/null 2>&1; then
+  ( set -x; git remote set-url origin "$url" ) || exit 1
+else
+  ( set -x; git remote add origin "$url" ) || exit 1
+fi

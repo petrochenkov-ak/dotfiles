@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+echo "pre-push hook start..."
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+    if [ "$remote_ref" = "refs/heads/main" ] || [ "$remote_ref" = "refs/heads/master" ]; then
+        echo "ERROR: Direct push to $remote_ref is forbidden. Use a feature branch and Pull Request." >&2
+        exit 1
+    fi
+done
+
+echo "pre-push hook done."

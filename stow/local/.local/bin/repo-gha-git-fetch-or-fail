@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+( set -x; git fetch -q --prune origin ) || exit 1
+
+BRANCH=$(git symbolic-ref --short HEAD) || exit 1
+
+if ! git show-ref --verify --quiet "refs/remotes/origin/$BRANCH"; then
+  exit 0
+fi
+
+if ! git rev-parse --verify HEAD >/dev/null 2>&1; then
+  ( set -x; git checkout -q -B "$BRANCH" "origin/$BRANCH" ) || exit 1
+  exit 0
+fi
+
+LOCAL=$(git rev-parse @) || exit 1
+REMOTE=$(git rev-parse "origin/$BRANCH") || exit 1
+
+if [ "$LOCAL" = "$REMOTE" ]; then
+  exit 0
+fi
+
+( set -x; git merge -q --ff-only "origin/$BRANCH" ) || exit 1
