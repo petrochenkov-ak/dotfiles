@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+ROOT_SCRIPTS_SRC_DIR="${REPO_SCAFFOLD_DIR}/docker/root/scripts"
+IMAGE_SCRIPTS_SRC_DIR="${REPO_SCAFFOLD_DIR}/docker/image/scripts"
+
+( set -x; rsync -a --delete --mkpath "${ROOT_SCRIPTS_SRC_DIR}/" docker/images/.scripts/ ) || exit 1
+
+( set -x; find docker/images -mindepth 1 -maxdepth 1 ! -name ".scripts" -type d -exec rsync -a --delete --mkpath "${IMAGE_SCRIPTS_SRC_DIR}/" {}/.scripts/ \; ) || exit 1

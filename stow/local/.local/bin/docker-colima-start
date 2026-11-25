@@ -16,12 +16,19 @@ if [ -z "${DOCKER_REGISTRY_IP}" ]; then
   exit 1
 fi
 
-COLIMA_STATUS=$(colima status 2>&1) && COLIMA_RUNNING=true || COLIMA_RUNNING=false
+current_context=$(docker context show) || exit 1
 
-if [ "${COLIMA_RUNNING}" != "true" ]; then
+if ! colima status >/dev/null 2>&1; then
   ( set -x; colima start --vm-type=vz --mount-type=virtiofs --cpu 4 --memory 3 --disk 50 --mount "${HOME}":w --mount /Volumes:w ) || exit 1
   ( set -x; colima ssh -- sudo sh -c "sed -i '/registry\.docker\.internal/d' /etc/hosts && echo '${DOCKER_REGISTRY_IP} registry.docker.internal' >> /etc/hosts" ) || exit 1
   ( set -x; colima ssh -- sudo mkdir -p /etc/docker/certs.d/registry.docker.internal:5000 ) || exit 1
   ( set -x; colima ssh -- sudo tee /etc/docker/certs.d/registry.docker.internal:5000/ca.crt < ~/.docker/certs.d/registry.docker.internal:5000/ca.crt >/dev/null ) || exit 1
+fi
+
+if ! docker context inspect colima >/dev/null 2>&1; then
+  ( set -x; docker context create colima --docker "host=unix://${COLIMA_HOME}/default/docker.sock" ) || exit 1
+fi
+
+if [ "${current_context}" != "colima" ]; then
   ( set -x; docker context use colima ) || exit 1
 fi;:
