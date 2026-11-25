@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+# python/packages/.scripts
+( set -x; rsync -a --delete --mkpath "${REPO_SCAFFOLD_DIR}/python/packages/scripts" python/packages/.scripts/ ) || exit 1

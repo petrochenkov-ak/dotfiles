@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- 
+	Enable full keyboard access for all controls 
+	(e.g. enable Tab in modal dialogs)
+ 	-->
+	<key>AppleKeyboardUIMode</key>
+	<integer>3</integer>
+
+	<!-- 
+	Finder: show all filename extensions
+ 	-->
+	<key>AppleShowAllExtensions</key>
+	<true/>
+
+
+	<!-- 
+	Finder: show all file in open/save dialog
+ 	-->
+	<key>AppleShowAllFiles</key>
+	<true/>
+
+	<!-- 
+	Disable automatic termination of inactive apps
+	-->
+	<key>NSDisableAutomaticTermination</key>
+	<true/>
+
+	<!-- 
+	Disable automatic termination of inactive apps
+	-->
+	<key>com.apple.springing.enabled</key>
+	<true/>
+
+	<!-- 
+	Remove the spring loading delay for directories
+	-->
+	<key>com.apple.springing.delay</key>
+	<string>0</string>
+</dict>
+</plist>

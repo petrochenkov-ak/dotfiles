@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+SRC_FILE="$REPO_SCAFFOLD_DIR"/make.command
+
+find "$PWD" -type f -name 'Makefile' -print0 | while IFS= read -r -d '' makefile; do
+    ( set -x; cp -f "$SRC_FILE" "${makefile%/*}/make.command" ) || exit 1
+done

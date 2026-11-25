@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+( set -x; repo-scaffold-sync-make ) || exit 1
+( set -x; repo-scaffold-sync-scripts ) || exit 1

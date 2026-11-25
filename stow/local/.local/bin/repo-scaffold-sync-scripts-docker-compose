@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+PROJECT_LOCAL_SCRIPTS_SRC_DIR="${REPO_SCAFFOLD_DIR}/docker/compose/project/local/scripts"
+PROJECT_SSH_SCRIPTS_SRC_DIR="${REPO_SCAFFOLD_DIR}/docker/compose/project/ssh/scripts"
+
+# docker/compose/{project}/local/
+( set -x; find docker/compose -mindepth 2 -maxdepth 2 -name "local" -type d -exec rsync -a --delete --mkpath "${PROJECT_LOCAL_SCRIPTS_SRC_DIR}/" {}/.scripts/ \; ) || exit 1
+# docker/compose/{project}/{env}/
+( set -x; find docker/compose -mindepth 2 -maxdepth 2 ! -name "local" -type d -exec rsync -a --delete --mkpath "${PROJECT_SSH_SCRIPTS_SRC_DIR}/" {}/.scripts/ \; ) || exit 1

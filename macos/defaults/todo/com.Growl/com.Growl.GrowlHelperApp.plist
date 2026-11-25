@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>GrowlAllowBackground</key>
+	<true/>
+	<key>GrowlAllowStartAtLogin</key>
+	<true/>
+	<key>GrowlAllowsRules</key>
+	<string>YES</string>
+	<key>GrowlEnableForward</key>
+	<false/>
+	<key>GrowlFirstLaunch</key>
+	<false/>
+	<key>GrowlMenuExtra</key>
+	<false/>
+	<key>GrowlMenuPulseEnabled</key>
+	<true/>
+	<key>GrowlMenuState</key>
+	<integer>0</integer>
+	<key>GrowlRelaunchWarnSuppress</key>
+	<false/>
+	<key>GrowlRollupAutomatic</key>
+	<false/>
+	<key>GrowlRollupEnabled</key>
+	<false/>
+	<key>GrowlRollupShown</key>
+	<false/>
+	<key>GrowlRulesLoggingEnabled</key>
+	<false/>
+	<key>GrowlRulesWarningShown</key>
+	<false/>
+	<key>GrowlSelectedPosition</key>
+	<integer>3</integer>
+	<key>GrowlSelectedPrefPane</key>
+	<integer>0</integer>
+	<key>GrowlSquelchMode</key>
+	<false/>
+	<key>GrowlStartServer</key>
+	<false/>
+	<key>IdleByScreenLock</key>
+	<false/>
+	<key>IdleByScreensaver</key>
+	<false/>
+	<key>IdleByTime</key>
+	<true/>
+	<key>IdleMultiplier</key>
+	<integer>60</integer>
+	<key>IdleThreshold</key>
+	<integer>3</integer>
+	<key>IdleTimeExceptions</key>
+	<array/>
+	<key>RequireGNTPSecurityWhenPasswordEmpty</key>
+	<false/>
+	<key>RequireSecureGNTPResponses</key>
+	<false/>
+	<key>ShouldStartGrowlAtLogin</key>
+	<false/>
+	<key>ShouldUseAppleNotifications</key>
+	<false/>
+	<key>SubscriptionAllowed</key>
+	<false/>
+</dict>
+</plist>

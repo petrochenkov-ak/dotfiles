@@ -1,0 +1,9 @@
+{name}:{PYTHON_VERSION}
+{name}:latest
+{name}:stable
+{name}:lite
+{name}:any
+- неоднозначно противоречит смыслу версии
+{name}:my
+{name}:другое
+
