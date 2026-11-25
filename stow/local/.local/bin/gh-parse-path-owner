@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+if [ -z "$1" ]; then
+  echo "Usage: $(basename "$0") <path>" >&2
+  exit 1
+fi
+
+if [ ! -d "$HOME/git" ]; then
+  echo "Error: base directory $HOME/git does not exist" >&2
+  exit 1
+fi
+
+BASE_DIR=$(cd "$HOME/git" && pwd -P)
+
+if [ -d "$1" ]; then
+  TARGET_PATH=$(cd "$1" && pwd -P)
+else
+  TARGET_DIR=$(dirname "$1")
+  if [ ! -d "$TARGET_DIR" ]; then
+    echo "Error: directory $TARGET_DIR does not exist" >&2
+    exit 1
+  fi
+  TARGET_PATH="$(cd "$TARGET_DIR" && pwd -P)/$(basename "$1")"
+fi
+
+if [[ "$TARGET_PATH" != "$BASE_DIR/"* ]]; then
+  echo "Error: path $TARGET_PATH is not inside $BASE_DIR" >&2
+  exit 1
+fi
+
+REL_PATH="${TARGET_PATH#$BASE_DIR/}"
+OWNER="${REL_PATH%%/*}"
+
+if [ -z "$OWNER" ]; then
+  echo "Error: could not parse owner from $TARGET_PATH" >&2
+  exit 1
+fi
+
+echo "$OWNER"

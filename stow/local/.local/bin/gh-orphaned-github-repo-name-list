@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+if [ -z "$1" ]; then
+  echo "Usage: $(basename "$0") <owner>" >&2
+  exit 1
+fi
+
+OWNER="$1"
+LOCAL_DIR="$HOME/git/$OWNER"
+
+LOCAL_LIST=$( set -x; find "$LOCAL_DIR" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; ) || exit 1
+REMOTE_LIST=$( set -x; gh repo list "$OWNER" --limit 1000 --json name --jq '.[].name' ) || exit 1
+
+comm -23 <(echo "$REMOTE_LIST" | sort -u) <(echo "$LOCAL_LIST" | sort -u)
